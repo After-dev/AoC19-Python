@@ -1,28 +1,23 @@
 import numpy as np
 
 
-def compute_fuel(mass):
-    initial_mass=mass
-    fuel_required=0
+def compute_fuel2(mass):
+    fuel=np.floor(mass/3)-2
 
-    while True:
-        fuel=np.floor(mass/3)-2
-        mass=fuel
+    if(fuel <= 0):
+        return 0
 
-        if(mass <= 0):
-            break
-
-        fuel_required += fuel
-
-    print("Fuel requirements for a module with "+initial_mass.__str__()+" of mass: "+fuel_required.__str__())
-    return fuel_required
+    return fuel+compute_fuel2(fuel)
 
 
 # examples
 print("Result for examples:")
-compute_fuel(14)
-compute_fuel(1969)
-compute_fuel(100756)
+e1=compute_fuel2(14)
+e2=compute_fuel2(1969)
+e3=compute_fuel2(100756)
+print("Fuel requirements for a module with 14 of mass: "+e1.__str__())
+print("Fuel requirements for a module with 1969 of mass: "+e2.__str__())
+print("Fuel requirements for a module with 100756 of mass: "+e3.__str__())
 
 
 # my puzzle
@@ -32,6 +27,8 @@ lines = file.readlines()
 
 solution=0
 for mass in lines:
-    solution += compute_fuel(int(mass))
+    fuel_required=compute_fuel2(int(mass))
+    print("Fuel requirements for a module with "+int(mass).__str__()+" of mass: "+fuel_required.__str__())
+    solution += fuel_required
 
 print("Solution: "+solution.__str__())
