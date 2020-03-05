@@ -2,13 +2,13 @@ import numpy as np
 
 
 def compute_gravity_assist_program(intcode):
-    pos=0
+    opcode_pos=0
 
-    value1=intcode[pos]
-    while((value1 == 1 or value1 == 2) and pos <= len(intcode)):
-        value2=intcode[pos+1]
-        value3=intcode[pos+2]
-        value4=intcode[pos+3]
+    value1=intcode[opcode_pos]
+    while((value1 == 1 or value1 == 2) and opcode_pos <= len(intcode)):
+        value2=intcode[opcode_pos+1]
+        value3=intcode[opcode_pos+2]
+        value4=intcode[opcode_pos+3]
 
         op1=intcode[value2]
         op2=intcode[value3]
@@ -18,8 +18,8 @@ def compute_gravity_assist_program(intcode):
         else:
             intcode[value4]=op1*op2
 
-        pos += 4
-        value1=intcode[pos]
+        opcode_pos += 4
+        value1=intcode[opcode_pos]
 
     return intcode[0]
 
