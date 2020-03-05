@@ -53,6 +53,7 @@ def manhattan_distance(wire1,wire2):
 
 
 
+
 # examples
 print("Result for examples:")
 wire1='R8,U5,L5,D3'
