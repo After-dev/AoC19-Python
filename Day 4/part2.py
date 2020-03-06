@@ -8,19 +8,19 @@ def eval_password(password):
 
     previous_digit=''
     for digit in str(password):
-        if(digit < previous_digit):
+        if digit < previous_digit:
             is_increasing = False
             break
-        if(digit == previous_digit):
-            if(digit in duplicate_digits):
+        if digit == previous_digit:
+            if digit in duplicate_digits:
                 duplicate_digits[digit] += 1
             else:
                 duplicate_digits.update({digit : 2})
 
         previous_digit = digit
 
-    # If digits always increase and exists duplicates
-    if(is_increasing and len(duplicate_digits) != 0):
+    # If digits always increase and exists duplicates of exactly two
+    if(is_increasing and 2 in [duplicate_digits[i] for i in duplicate_digits]):
         return True
 
     return False
