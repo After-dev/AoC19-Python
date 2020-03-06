@@ -6,6 +6,7 @@ def get_points(wire):
 
     # Set origin position (0,0)
     x = y = 0
+    step=0
 
     # Split sequence in movements
     moves=wire.split(',')
@@ -33,9 +34,10 @@ def get_points(wire):
             y += move_y
 
             point='('+x.__str__()+','+y.__str__()+')'
+            step += 1
 
             # Add each point
-            wire_points.update({point : '1'})
+            wire_points.update({point : step})
 
     return wire_points
 
@@ -49,17 +51,10 @@ def manhattan_distance(wire1,wire2):
     cross_points= list(set(wire1_points) & set(wire2_points))
 
     # Calculate distance between cross points and origin
-    distances=[]
-    for cross_point in cross_points:
-        nums=cross_point.split(',')
-        x=int(nums[0][1:])
-        y=int(nums[1][0:-1])
+    steps=[wire1_points[i] + wire2_points[i] for i in cross_points]
 
-        md=np.abs(x)+np.abs(y)
-        distances.append(md)
-
-    # Return shortest distance
-    solution=np.min(distances)
+    # Return fewest steps
+    solution=np.min(steps)
     print("Solution is: "+solution.__str__())
     return solution
 
