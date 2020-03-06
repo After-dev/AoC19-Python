@@ -93,4 +93,4 @@ Here are the best steps for the extra examples from above:
 What is the fewest combined steps the wires must take to reach an intersection?
 
 ### Solution
-My solution is: 
+My solution is: 6484
