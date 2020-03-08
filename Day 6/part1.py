@@ -3,6 +3,8 @@ import numpy as np
 
 def recursive_number_orbits(orbits,current,COM_distance):
     total=0
+
+    # Root object
     if(current not in orbits):
         return COM_distance
 
@@ -18,8 +20,7 @@ def get_number_orbits(map_data):
 
     # Populate orbits
     for orbit in map_data:
-        orbited=orbit.split(')')[0]
-        orbiter=orbit.split(')')[1]
+        [orbited,orbiter]=orbit.split(')')
 
         if(orbited in orbits):
             orbits[orbited].append(orbiter)
