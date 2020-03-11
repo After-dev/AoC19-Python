@@ -9,7 +9,7 @@ def compute_gravity_assist_program(intcode,input):
 
     # Browse array by steps of 4
     pointer=0
-    while(True):
+    while pointer < len(intcode_aux):
         # Get opcode and mode of parameters
         opcode_instruction=str(intcode_aux[pointer])
         for i in range(len(opcode_instruction),5):

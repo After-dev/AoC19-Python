@@ -58,6 +58,7 @@ def compute_gravity_assist_program(intcode,input,phase):
         elif(opcode == 4):
             intcode_aux[0]=intcode_aux[indexes[0]]
             pointer+=2
+            return intcode_aux[indexes[0]]
 
         # JUMP-IF-TRUE
         elif(opcode == 5):
@@ -91,15 +92,11 @@ def compute_gravity_assist_program(intcode,input,phase):
 
 
 def amplify(intcode,phases):
-    outs=[]
-
-    input=0
+    # Output of each amplifier is the input for next amplifier
+    input=out_signal=0
     for phase in phases:
-        out=compute_gravity_assist_program(intcode,input,phase)
-        input=out
-        outs.append(out)
-
-    out_signal=outs[-1]
+        out_signal=compute_gravity_assist_program(intcode,input,phase)
+        input=out_signal
 
     return out_signal
 
@@ -130,7 +127,6 @@ lines = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in lines]
 
 # Calculate the solution
-## Solo necesito generar todas las posibilidades
 phases=[0,1,2,3,4]
 permutations=list(itertools.permutations(phases))
 
