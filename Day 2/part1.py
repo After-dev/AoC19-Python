@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def compute_gravity_assist_program(intcode):
+def intcode_program(intcode):
     # Copy array
     intcode_aux=intcode[:]
 
@@ -31,36 +31,26 @@ def compute_gravity_assist_program(intcode):
 # Examples
 print("Result for examples:")
 intcode=[1,9,10,3,2,3,11,0,99,30,40,50]
-print(intcode)
-solution=compute_gravity_assist_program(intcode)
-print("Solution: "+solution.__str__())
+print(intcode_program(intcode))
 
 intcode=[1,0,0,0,99]
-print(intcode)
-solution=compute_gravity_assist_program(intcode)
-print("Solution: "+solution.__str__())
+print(intcode_program(intcode))
 
 intcode=[2,3,0,3,99]
-print(intcode)
-solution=compute_gravity_assist_program(intcode)
-print("Solution: "+solution.__str__())
+print(intcode_program(intcode))
 
 intcode=[2,4,4,5,99,0]
-print(intcode)
-solution=compute_gravity_assist_program(intcode)
-print("Solution: "+solution.__str__())
+print(intcode_program(intcode))
 
 intcode=[1,1,1,4,99,5,6,0,99]
-print(intcode)
-solution=compute_gravity_assist_program(intcode)
-print("Solution: "+solution.__str__())
+print(intcode_program(intcode))
 
 
 
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 line = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in line]
 
@@ -69,8 +59,7 @@ intcode[1]=12
 intcode[2]=2
 
 # Calculate the solution
-print(intcode)
-solution=compute_gravity_assist_program(intcode)
+solution=intcode_program(intcode)
 
 # Print the solution
-print("Solution : "+solution.__str__())
+print(solution)

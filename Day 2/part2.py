@@ -1,6 +1,7 @@
 import numpy as np
 
-def compute_gravity_assist_program(intcode):
+
+def intcode_program(intcode):
     # Copy array
     intcode_aux=intcode[:]
 
@@ -30,7 +31,7 @@ def compute_gravity_assist_program(intcode):
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 line = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in line]
 
@@ -40,14 +41,13 @@ for noun in range(100):
         intcode[1]=noun
         intcode[2]=verb
 
-        output=compute_gravity_assist_program(intcode)
+        output=intcode_program(intcode)
 
         if(output == 19690720):
             solution=100*noun+verb
 
             # Print the solution
-            print("-noun: "+noun.__str__())
-            print("-verb: "+verb.__str__())
-            print
-            print("Solution: "+solution.__str__())
+            print(solution)
+            #print("-noun: "+noun.__str__())
+            #print("-verb: "+verb.__str__())
             break
