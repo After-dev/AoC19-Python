@@ -18,10 +18,9 @@ def asteroids_detected(asteroids,point):
 
     for asteroid in asteroids:
         if(asteroid != point):
+            # Calculate down of a straight
             var_x=float(asteroid[0]-point[0])
             var_y=float(asteroid[1]-point[1])
-            sign_x=sign_y=''
-
             if(var_x != 0):
                 p=var_y/var_x
             elif(var_y > 0):
@@ -29,9 +28,11 @@ def asteroids_detected(asteroids,point):
             else:
                 p=float('-inf')
 
+            # Get position inside the straight
             sign_x = '+' if var_x >= 0 else '-'
             sign_y = '+' if var_y >= 0 else '-'
 
+            # Create key
             key=sign_x+sign_y+p.__str__()
             sight_lines.append(key)
 
@@ -44,7 +45,8 @@ def get_best_asteroid(asteroids):
     for asteroid in asteroids:
             solutions.append(asteroids_detected(asteroids,asteroid))
 
-    return np.max(solutions)
+    best_asteroid=solutions.index(np.max(solutions))
+    return [asteroids[best_asteroid],np.max(solutions)]
 
 
 
