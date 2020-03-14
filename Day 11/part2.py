@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 
 def compute_gravity_assist_program(intcode,pointer,relative_base,input,n_read):
@@ -115,7 +116,10 @@ def painting_robot(intcode):
     # Movement until intcode ends
     while(True):
         # Get current panel color
-        current_color=painted_panels[pos] if pos in painted_panels else 0
+        if(len(painted_panels) == 0):
+            current_color=1
+        else:
+            current_color=painted_panels[pos] if pos in painted_panels else 0
 
         # Get color and direction
         [output,state[0],state[1],state[2]]=compute_gravity_assist_program(state[0],state[1],state[2],current_color,2)
@@ -137,6 +141,23 @@ def painting_robot(intcode):
 
     return painted_panels
 
+def print_panel(panel):
+    # Get bounds
+    points=[i for i in panel]
+    min_y=min([i[0] for i in points])
+    min_x=min([i[1] for i in points])
+    max_y=max([i[0] for i in points])
+    max_x=max([i[1] for i in points])
+
+    # Generate image
+    fig=np.zeros([max_y-min_y+1,max_x-min_x+1], dtype=np.uint8)
+    for point in panel:
+        fig[max_y-point[0]][point[1]-min_x]=panel[point]*255
+
+    # Store image
+    cv2.imwrite('./img.png',fig)
+
+
 
 
 
@@ -149,6 +170,7 @@ intcode=[int(i) for i in lines]
 
 # Calculate the solution
 panel=painting_robot(intcode)
+print_panel(panel)
 solution=len(panel)
 
 # Print the solution
