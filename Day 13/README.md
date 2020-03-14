@@ -40,4 +40,4 @@ The arcade cabinet also has a [segment display](https://en.wikipedia.org/wiki/Di
 Beat the game by breaking all the blocks. **What is your score after the last block is broken?**
 
 ### Solution
-My solution is: 
+My solution is: `16999`
