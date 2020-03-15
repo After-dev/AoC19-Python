@@ -1,36 +1,43 @@
 import numpy as np
 
 
-def recursive_number_orbits(orbits,current,COM_distance):
-    total=0
-
-    # Root object
-    if(current not in orbits):
-        return COM_distance
-
-    for object in orbits[current]:
-        total+=recursive_number_orbits(orbits,object,COM_distance+1)
-
-    return total+COM_distance
-
-
-
 def get_number_orbits(map_data):
-    orbits={}
+    parents={}
 
-    # Populate orbits
+    # Populate parents
     for orbit in map_data:
         [orbited,orbiter]=orbit.split(')')
+        parents[orbiter]=orbited
 
-        if(orbited in orbits):
-            orbits[orbited].append(orbiter)
-        else:
-            orbits.update({orbited : [orbiter]})
+    # Compute total (direct and indirect) orbits
+    orbits=0
+    for node in parents:
+        # Count all orbits from current node until COM
+        while(node in parents):
+            node = parents[node]
+            orbits += 1
 
-    # Compute direct and indirect orbits
-    return recursive_number_orbits(orbits,'COM',0)
+    return orbits
 
 
+
+
+
+
+# Examples
+map_data=['COM)B',
+          'B)C',
+          'C)D',
+          'D)E',
+          'E)F',
+          'B)G',
+          'G)H',
+          'D)I',
+          'E)J',
+          'J)K',
+          'K)L'
+]
+print(get_number_orbits(map_data))
 
 
 
@@ -38,7 +45,7 @@ def get_number_orbits(map_data):
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 lines = file.readlines()
 map_data=[i[:-1] for i in lines]
 
@@ -46,4 +53,4 @@ map_data=[i[:-1] for i in lines]
 solution=get_number_orbits(map_data)
 
 # Print the solution
-print("Solution: "+solution.__str__())
+print(solution)

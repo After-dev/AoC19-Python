@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_parents(parents,orig,dest):
+def get_path(parents,orig,dest):
     path=[]
 
     next_parent=parents[orig]
@@ -16,20 +16,41 @@ def get_parents(parents,orig,dest):
 def get_number_of_transfers(map_data):
     parents={}
 
-    # Populate orbits
+    # Populate parents
     for orbit in map_data:
         [orbited,orbiter]=orbit.split(')')
-        parents.update({orbiter : orbited})
+        parents[orbiter]=orbited
 
-    # Compute direct and indirect orbits
-    from_YOU=get_parents(parents,'YOU','COM')
-    from_SAN=get_parents(parents,'SAN','COM')
+    # Compute path from YOU and SAN to COM
+    from_YOU_to_COM=get_path(parents,'YOU','COM')
+    from_SAN_to_COM=get_path(parents,'SAN','COM')
 
-    complete_path=set(from_YOU).symmetric_difference(set(from_SAN))
+    # Delete common objects to generate path between YOU and SAN
+    from_YOU_to_SAN=set(from_YOU_to_COM).symmetric_difference(set(from_SAN_to_COM))
 
-    return len(complete_path)
+    return len(from_YOU_to_SAN)
 
 
+
+
+
+
+# Examples
+map_data=['COM)B',
+          'B)C',
+          'C)D',
+          'D)E',
+          'E)F',
+          'B)G',
+          'G)H',
+          'D)I',
+          'E)J',
+          'J)K',
+          'K)L',
+          'K)YOU',
+          'I)SAN'
+]
+print(get_number_of_transfers(map_data))
 
 
 
@@ -37,7 +58,7 @@ def get_number_of_transfers(map_data):
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 lines = file.readlines()
 map_data=[i[:-1] for i in lines]
 
@@ -45,4 +66,4 @@ map_data=[i[:-1] for i in lines]
 solution=get_number_of_transfers(map_data)
 
 # Print the solution
-print("Solution: "+solution.__str__())
+print(solution)
