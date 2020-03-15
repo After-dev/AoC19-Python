@@ -97,4 +97,4 @@ Here are some larger examples:
 Given the list of reactions in your puzzle input, **what is the minimum amount of `ORE` required to produce exactly 1 `FUEL`?**
 
 ### Solution
-My solution is: 
+My solution is: `483766`
