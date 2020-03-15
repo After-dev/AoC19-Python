@@ -160,7 +160,7 @@ def arcade_game(intcode):
 
 # My puzzle
 print("Result for my puzzle:")
-# Input data
+# Load data
 file = open('./input.data', 'r')
 line = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in line]
