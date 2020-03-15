@@ -1,19 +1,15 @@
-import numpy as np
-
-
-def motion_simulation(init_pos_moons,steps):
-    moons_pos=init_pos_moons[:]
-
-    # Init moon velocities
-    moons_velocities=[]
-    for _ in init_pos_moons:
-        moons_velocities.append([0,0,0])
-
-    # Print position and velocity of each moon at init
-    print('After 0 steps:')
+def print_state(moons_pos,moons_velocities,steps):
+    print('After '+steps+' steps:')
     for i in range(len(moons_pos)):
         print('pos=<x='+str(moons_pos[i][0])+', y='+str(moons_pos[i][1])+', z='+str(moons_pos[i][2])+'>, vel=<x='+str(moons_velocities[i][0])+', y='+str(moons_velocities[i][0])+', z='+str(moons_velocities[i][0])+'>')
     print
+
+def motion_simulation(moons_pos,steps):
+    # Init moon velocities
+    moons_velocities=[[0,0,0] for _ in moons_pos]
+
+    # Print position and velocity of each moon at init
+    #print_state(moons_pos,moons_velocities,'0')
 
     # Simulate each step
     for step in range(steps):
@@ -33,10 +29,7 @@ def motion_simulation(init_pos_moons,steps):
                 moons_pos[i][dim] += moons_velocities[i][dim]
 
         # Print position and velocity of each moon
-        print('After '+str(step+1)+' steps:')
-        for i in range(len(moons_pos)):
-            print('pos=<x='+str(moons_pos[i][0])+', y='+str(moons_pos[i][1])+', z='+str(moons_pos[i][2])+'>, vel=<x='+str(moons_velocities[i][0])+', y='+str(moons_velocities[i][1])+', z='+str(moons_velocities[i][2])+'>')
-        print
+        #print_state(moons_pos,moons_velocities,str(step+1))
 
     return [moons_pos,moons_velocities]
 
@@ -56,6 +49,7 @@ def calculate_total_energy(moons_pos,moons_velocities):
 
 
 # Examples
+print("Result for examples:")
 init_pos_Io=[-1,0,2]
 init_pos_Europa=[2,-10,-7]
 init_pos_Ganymede=[4,-8,8]
@@ -78,18 +72,14 @@ print(calculate_total_energy(moons_pos,moons_velocities))
 
 # My puzzle
 print("Result for my puzzle:")
-# Input data
-init_pos_moons=[
-    [5,13,-3],
-    [18,-7,13],
-    [16,3,4],
-    [0,8,8]
-]
-
-[moons_pos,moons_velocities]=motion_simulation(init_pos_moons,steps=1000)
+# Load data
+file = open('./input.data', 'r')
+lines = [line[:-1].replace(' ','')[1:-1].replace('x','').replace('y','').replace('z','').replace('=','') for line in file.readlines()]
+init_pos_moons=[list(map(int,line.split(','))) for line in lines]
 
 # Calculate the solution
+[moons_pos,moons_velocities]=motion_simulation(init_pos_moons,steps=1000)
 solution=calculate_total_energy(moons_pos,moons_velocities)
 
 # Print the solution
-print("Solution: "+solution.__str__())
+print(solution)

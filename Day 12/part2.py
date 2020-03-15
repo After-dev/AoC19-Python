@@ -2,17 +2,18 @@ import numpy as np
 from copy import copy, deepcopy
 
 
+def print_state(moons_pos,moons_velocities,steps):
+    print('After '+steps+' steps:')
+    for i in range(len(moons_pos)):
+        print('pos=<x='+str(moons_pos[i][0])+', y='+str(moons_pos[i][1])+', z='+str(moons_pos[i][2])+'>, vel=<x='+str(moons_velocities[i][0])+', y='+str(moons_velocities[i][0])+', z='+str(moons_velocities[i][0])+'>')
+    print
+
 def motion_simulation(init_pos_moons,init_vel_moons,steps):
     moons_pos=deepcopy(init_pos_moons)
     moons_velocities=deepcopy(init_vel_moons)
 
     # Print position and velocity of each moon at init
-    """
-    print('After 0 steps:')
-    for i in range(len(moons_pos)):
-        print('pos=<x='+str(moons_pos[i][0])+', y='+str(moons_pos[i][1])+', z='+str(moons_pos[i][2])+'>, vel=<x='+str(moons_velocities[i][0])+', y='+str(moons_velocities[i][0])+', z='+str(moons_velocities[i][0])+'>')
-    print
-    """
+    #print_state(moons_pos,moons_velocities,'0')
 
     # Simulate each step
     for step in range(steps):
@@ -32,12 +33,7 @@ def motion_simulation(init_pos_moons,init_vel_moons,steps):
                 moons_pos[i][dim] += moons_velocities[i][dim]
 
         # Print position and velocity of each moon
-        """
-        print('After '+str(step+1)+' steps:')
-        for i in range(len(moons_pos)):
-            print('pos=<x='+str(moons_pos[i][0])+', y='+str(moons_pos[i][1])+', z='+str(moons_pos[i][2])+'>, vel=<x='+str(moons_velocities[i][0])+', y='+str(moons_velocities[i][1])+', z='+str(moons_velocities[i][2])+'>')
-        print
-        """
+        #print_state(moons_pos,moons_velocities,str(step+1))
 
     return [moons_pos,moons_velocities]
 
@@ -57,7 +53,7 @@ def calculate_total_energy(moons_pos,moons_velocities):
 def steps_to_cycle(init_pos_moons,init_vel_moons):
     steps=[0,0,0]
 
-    # Find init pos for each dimension
+    # Find steps needed to reach initial position in each dimension
     for dim in range(3):
         # Get initial pos for dimension dim
         dim_init_pos=[moon[dim] for moon in init_pos_moons]
@@ -72,11 +68,13 @@ def steps_to_cycle(init_pos_moons,init_vel_moons):
             if([moon[dim] for moon in current_pos_moons] == dim_init_pos and [moon[dim] for moon in current_vel_moons] == [0,0,0,0]):
                 break
 
+    # Calculate least common multiple to obtain total steps
     return np.lcm(steps[0], np.lcm(steps[1], steps[2]))
 
 
 
 # Examples
+print("Result for examples:")
 init_pos_Io=[-1,0,2]
 init_pos_Europa=[2,-10,-7]
 init_pos_Ganymede=[4,-8,8]
@@ -101,17 +99,14 @@ print(steps_to_cycle(init_pos_moons,init_vel_moons))
 
 # My puzzle
 print("Result for my puzzle:")
-# Input data
-init_pos_moons=[
-    [5,13,-3],
-    [18,-7,13],
-    [16,3,4],
-    [0,8,8]
-]
+# Load data
+file = open('./input.data', 'r')
+lines = [line[:-1].replace(' ','')[1:-1].replace('x','').replace('y','').replace('z','').replace('=','') for line in file.readlines()]
+init_pos_moons=[list(map(int,line.split(','))) for line in lines]
 init_vel_moons=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
 
 # Calculate the solution
 solution=steps_to_cycle(init_pos_moons,init_vel_moons)
 
 # Print the solution
-print("Solution: "+solution.__str__())
+print(solution)
