@@ -1,11 +1,8 @@
-import numpy as np
-
-
 def intcode_program(intcode,input):
     # Copy array
     intcode_aux=intcode[:]
 
-    # Browse array by steps of 4
+    # Browse array by steps
     pointer=0
     while pointer < len(intcode_aux):
         # Get opcode and mode of parameters
