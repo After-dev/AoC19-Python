@@ -1,26 +1,20 @@
-import numpy as np
-
-
-def get_layers(image_data,image_dims):
-    layers=[]
-
+def get_layers(image_data,image_dims,output_format='1d'):
     # Calculate layer total size
     layer_size=image_dims[0]*image_dims[1]
 
-    # Split each layer
-    for x in range(0,len(image_data),layer_size):
-        layer=[]
+    # Split all data in different layers (1D)
+    layers_1d=[image_data[i:i+layer_size] for i in range(0,len(image_data),layer_size)]
+    if(output_format == '1d'):
+        return layers_1d
 
-        # Get data for current layer
-        data_layer=image_data[x:x+layer_size]
+    # Split each layer in rows (2D)
+    layers_2d=[]
+    row_size=layer_size/image_dims[1]
+    for layer_1d in layers_1d:
+        layer_2d=[layer_1d[i:i+row_size] for i in range(0,len(layer_1d),row_size)]
+        layers_2d.append(layer_2d)
 
-        # Compose the layer
-        for y in range(image_dims[1]):
-            layer.append(data_layer[y*image_dims[0]:(y+1)*image_dims[0]])
-
-        layers.append(layer)
-
-    return layers
+    return layers_2d
 
 
 def decode_image(layers,image_dims):
@@ -50,9 +44,10 @@ def decode_image(layers,image_dims):
 
 
 # Examples
+print("Result for examples:")
 image_data='0222112222120000'
 image_dims=[2,2]
-layers=get_layers(image_data,image_dims)
+layers=get_layers(image_data,image_dims,'2d')
 print(decode_image(layers,image_dims))
 
 
@@ -60,15 +55,14 @@ print(decode_image(layers,image_dims))
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 image_data = file.readlines()[0][:-1]
+image_dims=[25,6]
 
 # Calculate the solution
-image_dims=[25,6]
-layers=get_layers(image_data,image_dims)
+layers=get_layers(image_data,image_dims,'2d')
 image_decoded=decode_image(layers,image_dims)
 
 # Print the solution
-print("Solution:")
 for row in image_decoded:
     print(row.replace('0',' ').replace('1','#'))
