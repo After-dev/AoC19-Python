@@ -2,20 +2,19 @@ import numpy as np
 import itertools
 
 
-def compute_gravity_assist_program(intcode,input,phase):
+def intcode_program(intcode,inputs):
     # Copy array
     intcode_aux=intcode[:]
 
-    # Browse array by steps of 4
+    # Browse array by steps
     pointer=0
     while(True):
         # Get opcode and mode of parameters
         opcode_instruction=str(intcode_aux[pointer])
-        for i in range(len(opcode_instruction),5):
+        while(len(opcode_instruction) < 5):
             opcode_instruction = '0'+opcode_instruction
 
         opcode=int(opcode_instruction[-2:])
-
         mode_params=[
             int(opcode_instruction[-3]),
             int(opcode_instruction[-4]),
@@ -32,7 +31,7 @@ def compute_gravity_assist_program(intcode,input,phase):
         # Apply opcode operation
         # STOP
         if(opcode == 99):
-            return intcode_aux[0]
+            break
 
         # ADDITION
         elif(opcode == 1):
@@ -50,15 +49,14 @@ def compute_gravity_assist_program(intcode,input,phase):
 
         # INPUT
         elif(opcode == 3):
-            intcode_aux[indexes[0]]=phase
-            phase=input
+            intcode_aux[indexes[0]]=inputs.pop(0)
             pointer+=2
 
         # OUTPUT
         elif(opcode == 4):
             intcode_aux[0]=intcode_aux[indexes[0]]
             pointer+=2
-            return intcode_aux[indexes[0]]
+            break
 
         # JUMP-IF-TRUE
         elif(opcode == 5):
@@ -90,13 +88,18 @@ def compute_gravity_assist_program(intcode,input,phase):
                 intcode_aux[indexes[2]]=0
             pointer+=4
 
+    return intcode_aux[indexes[0]]
 
-def amplify(intcode,phases):
+
+def amplify(intcode,conf):
     # Output of each amplifier is the input for next amplifier
-    input=out_signal=0
-    for phase in phases:
-        out_signal=compute_gravity_assist_program(intcode,input,phase)
-        input=out_signal
+    out_signal=0
+    inputs=[]
+    for phase in conf:
+        # Add inputs (phase,previous_output)
+        inputs.append(phase)
+        inputs.append(out_signal)
+        out_signal=intcode_program(intcode,inputs)
 
     return out_signal
 
@@ -105,6 +108,7 @@ def amplify(intcode,phases):
 
 
 # Examples
+print("Result for examples:")
 intcode=[3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0]
 phases=[4,3,2,1,0]
 print(amplify(intcode,phases))
@@ -122,19 +126,19 @@ print(amplify(intcode,phases))
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 lines = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in lines]
 
 # Calculate the solution
 phases=[0,1,2,3,4]
-permutations=list(itertools.permutations(phases))
+configs=list(itertools.permutations(phases))
 
 solutions=[]
-for phase in permutations:
-    solutions.append(amplify(intcode,phase))
-#print(solutions)
+for conf in configs:
+    solutions.append(amplify(intcode,conf))
+
+solution=np.max(solutions)
 
 # Print the solution
-solution=np.max(solutions)
-print("Solution: "+solution.__str__())
+print(solution)

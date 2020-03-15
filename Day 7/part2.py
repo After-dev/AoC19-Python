@@ -2,20 +2,22 @@ import numpy as np
 import itertools
 
 
-def compute_gravity_assist_program(intcode,pointer,input):
-    out=[]
-    # Copy array
-    intcode_aux=intcode[:]
+def intcode_program(state):
+    output=None
 
-    # Browse array by steps of 4
+    # Get state
+    intcode_aux=state[0][:]
+    inputs=state[1]
+    pointer=state[2]
+
+    # Browse array by steps
     while pointer < len(intcode_aux):
         # Get opcode and mode of parameters
         opcode_instruction=str(intcode_aux[pointer])
-        for i in range(len(opcode_instruction),5):
+        while(len(opcode_instruction) < 5):
             opcode_instruction = '0'+opcode_instruction
 
         opcode=int(opcode_instruction[-2:])
-
         mode_params=[
             int(opcode_instruction[-3]),
             int(opcode_instruction[-4]),
@@ -50,12 +52,12 @@ def compute_gravity_assist_program(intcode,pointer,input):
 
         # INPUT
         elif(opcode == 3):
-            intcode_aux[indexes[0]]=input.pop()
+            intcode_aux[indexes[0]]=inputs.pop(0)
             pointer+=2
 
         # OUTPUT
         elif(opcode == 4):
-            out.append(intcode_aux[indexes[0]])
+            output=intcode_aux[indexes[0]]
             pointer+=2
             break
 
@@ -89,40 +91,37 @@ def compute_gravity_assist_program(intcode,pointer,input):
                 intcode_aux[indexes[2]]=0
             pointer+=4
 
-    return out,intcode_aux,pointer
+    return intcode_aux,pointer,output
 
 
-def amplify(intcode,phases):
-    out_signal=-999999
+def amplify(intcode,config):
+    signal=-1
 
     # Output of each amplifier is the input for next amplifier
     output=0
-    states=[]
-    for i in range(len(phases)):
-        states.append([intcode,0,[output,phases[i]]])
-        [output_list,intcode_aux,pointer]=compute_gravity_assist_program(states[i][0],states[i][1],[output,phases[i]])
-        states[i][0]=intcode_aux
-        states[i][1]=pointer
 
-        if(len(output_list) > 0):
-            output=output_list[0]
+    # Initialize states of each amplifier
+    states=[[intcode,[config[i]],0] for i in range(len(config))]
 
-    while(len(output_list) > 0):
-        for i in range(len(phases)):
-            [output_list,intcode_aux,pointer]=compute_gravity_assist_program(states[i][0],states[i][1],[output])
-            states[i][0]=intcode_aux
-            states[i][1]=pointer
+    # Run aplifier in loop until there is no output
+    while(output != None):
+        # Each amplifier
+        for i in range(len(config)):
+            # Add previous output to inputs
+            states[i][1].append(output)
+            # Run amplifier
+            [states[i][0],states[i][2],output]=intcode_program(states[i])
+            # Update final result
+            signal=output if output != None else signal
 
-            if(len(output_list) > 0):
-                output=output_list[0]
-
-    return output
+    return signal
 
 
 
 
 
 # Examples
+print("Result for examples:")
 intcode=[3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
 phases=[9,8,7,6,5]
 print(amplify(intcode,phases))
@@ -136,19 +135,19 @@ print(amplify(intcode,phases))
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 lines = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in lines]
 
 # Calculate the solution
 phases=[5,6,7,8,9]
-permutations=list(itertools.permutations(phases))
+configs=list(itertools.permutations(phases))
 
 solutions=[]
-for phase in permutations:
-    solutions.append(amplify(intcode,phase))
-#print(solutions)
+for conf in configs:
+    solutions.append(amplify(intcode,conf))
+
+solution=np.max(solutions)
 
 # Print the solution
-solution=np.max(solutions)
-print("Solution: "+solution.__str__())
+print(solution)
