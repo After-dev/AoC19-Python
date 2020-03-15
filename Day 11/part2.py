@@ -1,23 +1,28 @@
 import numpy as np
-import cv2
 
 
-def compute_gravity_assist_program(intcode,pointer,relative_base,input,n_read):
-    out=[]
+def intcode_program(state):
+    output=[]
 
-    # Copy array
-    intcode_aux=intcode[:]
-    intcode_aux=np.resize(intcode_aux,(2000))
+    # Get state
+    intcode_aux=state[0][:]
+    inputs=state[1]
+    pointer=state[2]
+    relative_base=state[3]
+    max_size=state[4]
+    n_read=state[5]
 
-    # Browse array by steps of 4
+    # Resize array (get more memory)
+    intcode_aux=np.resize(intcode_aux,(max_size))
+
+    # Browse array by steps
     while pointer < len(intcode):
         # Get opcode and mode of parameters
         opcode_instruction=str(intcode_aux[pointer])
-        for i in range(len(opcode_instruction),5):
+        while(len(opcode_instruction) < 5):
             opcode_instruction = '0'+opcode_instruction
 
         opcode=int(opcode_instruction[-2:])
-
         mode_params=[
             int(opcode_instruction[-3]),
             int(opcode_instruction[-4]),
@@ -57,15 +62,15 @@ def compute_gravity_assist_program(intcode,pointer,relative_base,input,n_read):
 
         # INPUT
         elif(opcode == 3):
-            intcode_aux[indexes[0]]=input
+            intcode_aux[indexes[0]]=inputs.pop(0)
             pointer+=2
 
         # OUTPUT
         elif(opcode == 4):
             #print('Output: '+intcode_aux[indexes[0]].__str__())
-            out.append(intcode_aux[indexes[0]])
+            output.append(intcode_aux[indexes[0]])
             pointer+=2
-            if(len(out) == n_read):
+            if(len(output) == n_read):
                 break
 
         # JUMP-IF-TRUE
@@ -98,12 +103,12 @@ def compute_gravity_assist_program(intcode,pointer,relative_base,input,n_read):
                 intcode_aux[indexes[2]]=0
             pointer+=4
 
-        # EQUAL-TO
+        # ADJUST RELATIVE BASE
         elif(opcode == 9):
             relative_base += intcode_aux[indexes[0]]
             pointer+=2
 
-    return out,intcode_aux,pointer,relative_base
+    return output,intcode_aux,pointer,relative_base
 
 
 def painting_robot(intcode):
@@ -111,7 +116,7 @@ def painting_robot(intcode):
     pos=(0,0)
     dir=0
     directions=[(1,0),(0,1),(-1,0),(0,-1)]
-    state=[intcode,0,0]
+    state=[intcode,[],0,0,2000,2]
 
     # Movement until intcode ends
     while(True):
@@ -120,20 +125,17 @@ def painting_robot(intcode):
             current_color=1
         else:
             current_color=painted_panels[pos] if pos in painted_panels else 0
+        state[1].append(current_color)
 
         # Get color and direction
-        [output,state[0],state[1],state[2]]=compute_gravity_assist_program(state[0],state[1],state[2],current_color,2)
+        [output,state[0],state[2],state[3]]=intcode_program(state)
         if(len(output) != 2):
             break
 
-        color=output[0]
-        direction=output[1]
+        [color,direction]=output
 
         # Paint panel
-        if(pos in painted_panels):
-            painted_panels[pos]=color
-        else:
-            painted_panels.update({pos:color})
+        painted_panels[pos]=color
 
         # Move robot
         dir = (dir-1 if direction == 0 else dir+1)%len(directions)
@@ -152,10 +154,14 @@ def print_panel(panel):
     # Generate image
     fig=np.zeros([max_y-min_y+1,max_x-min_x+1], dtype=np.uint8)
     for point in panel:
-        fig[max_y-point[0]][point[1]-min_x]=panel[point]*255
+        fig[max_y-point[0]][point[1]-min_x]=panel[point]
 
-    # Store image
-    cv2.imwrite('./img.png',fig)
+    # Show fig
+    for row in fig:
+        row_text=''
+        for c in row:
+            row_text += str(c)
+        print(row_text.replace('0',' ').replace('1','#'))
 
 
 
@@ -164,14 +170,12 @@ def print_panel(panel):
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 lines = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in lines]
 
 # Calculate the solution
 panel=painting_robot(intcode)
-print_panel(panel)
-solution=len(panel)
 
 # Print the solution
-print("Solution: "+solution.__str__())
+print_panel(panel)
