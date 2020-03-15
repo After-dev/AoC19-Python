@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def intcode_program(intcode):
     # Copy array
     intcode_aux=intcode[:]
