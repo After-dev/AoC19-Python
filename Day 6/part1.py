@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def get_number_orbits(map_data):
     parents={}
 
@@ -25,6 +22,7 @@ def get_number_orbits(map_data):
 
 
 # Examples
+print("Result for examples:")
 map_data=['COM)B',
           'B)C',
           'C)D',

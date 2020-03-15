@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def get_path(parents,orig,dest):
     path=[]
 
@@ -36,6 +33,7 @@ def get_number_of_transfers(map_data):
 
 
 # Examples
+print("Result for examples:")
 map_data=['COM)B',
           'B)C',
           'C)D',
