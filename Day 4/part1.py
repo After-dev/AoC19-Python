@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def eval_password(password):
     # Conditions
     is_increasing=True
