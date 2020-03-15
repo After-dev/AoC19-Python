@@ -98,3 +98,20 @@ Given the list of reactions in your puzzle input, **what is the minimum amount o
 
 ### Solution
 My solution is: `483766`
+
+
+## Part 2
+https://adventofcode.com/2019/day/14#part2
+
+### Description
+After collecting `ORE` for a while, you check your cargo hold: **1 trillion** (**1000000000000**) units of `ORE`.
+
+**With that much ore**, given the examples above:
+* The 13312 `ORE`-per-`FUEL` example could produce **82892753** `FUEL`.
+* The 180697 `ORE`-per-`FUEL` example could produce **5586022** `FUEL`.
+* The 2210736 `ORE`-per-`FUEL` example could produce **460664** `FUEL`.
+
+Given 1 trillion `ORE`, **what is the maximum amount of `FUEL` you can produce?**
+
+### Solution
+My solution is: `3061522`
