@@ -1,9 +1,7 @@
 import numpy as np
 
 
-def compute_gravity_assist_program(intcode,input):
-    output=-1
-
+def intcode_program(intcode,input):
     # Copy array
     intcode_aux=intcode[:]
 
@@ -12,11 +10,10 @@ def compute_gravity_assist_program(intcode,input):
     while pointer < len(intcode_aux):
         # Get opcode and mode of parameters
         opcode_instruction=str(intcode_aux[pointer])
-        for i in range(len(opcode_instruction),5):
+        while(len(opcode_instruction) < 5):
             opcode_instruction = '0'+opcode_instruction
 
         opcode=int(opcode_instruction[-2:])
-
         mode_params=[
             int(opcode_instruction[-3]),
             int(opcode_instruction[-4]),
@@ -33,7 +30,7 @@ def compute_gravity_assist_program(intcode,input):
         # Apply opcode operation
         # STOP
         if(opcode == 99):
-            return intcode_aux[0]
+            break
 
         # ADDITION
         elif(opcode == 1):
@@ -56,7 +53,7 @@ def compute_gravity_assist_program(intcode,input):
 
         # OUTPUT
         elif(opcode == 4):
-            print('Output: '+intcode_aux[indexes[0]].__str__())
+            #print('Output: '+intcode_aux[indexes[0]].__str__())
             intcode_aux[0]=intcode_aux[indexes[0]]
             pointer+=2
 
@@ -99,12 +96,12 @@ def compute_gravity_assist_program(intcode,input):
 # My puzzle
 print("Result for my puzzle:")
 # Load data
-file = open('data/input.data', 'r')
+file = open('./input.data', 'r')
 lines = file.readlines()[0][:-1].split(',')
 intcode=[int(i) for i in lines]
 
 # Calculate the solution
-solution=compute_gravity_assist_program(intcode,5)
+solution=intcode_program(intcode,5)
 
 # Print the solution
-print("Solution: "+solution.__str__())
+print(solution)
