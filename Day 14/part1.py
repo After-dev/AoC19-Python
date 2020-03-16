@@ -4,17 +4,17 @@ import numpy as np
 def minimum_ORE(reactions):
     ORE_units=0
     unused_chemicals={}
-    chemicals=[['FUEL',1]]
+    generate_chemicals=[['FUEL',1]]
 
-    while(len(chemicals) > 0):
-        # Get next chemical to search
-        [chemical,units_needed]=chemicals.pop(0)
+    while(len(generate_chemicals) > 0):
+        # Get next chemical to generate
+        [chemical,units_needed]=generate_chemicals.pop(0)
 
         # Try to reduce units_needed with unused chemicals
         if(chemical in unused_chemicals):
-            available=unused_chemicals[chemical]
-            if(units_needed >= available):
-                units_needed -= unused_chemicals[chemical]
+            unused=unused_chemicals[chemical]
+            if(units_needed >= unused):
+                units_needed -= unused
                 del unused_chemicals[chemical]
             else:
                 unused_chemicals[chemical] -= units_needed
@@ -25,7 +25,7 @@ def minimum_ORE(reactions):
             [reaction_output,reaction_inputs]=reactions[chemical]
 
             # Calculate how many times is it necessary to apply the rule
-            p=np.ceil(float(units_needed)/float(reaction_output))
+            p=int(np.ceil(float(units_needed)/float(reaction_output)))
 
             # Store unused chemicals
             unused_units=reaction_output*p-units_needed
@@ -40,11 +40,11 @@ def minimum_ORE(reactions):
                 # Compute units to generate
                 input_units_generated=p*int(input_units)
 
-                # Search new chemicals
+                # Add input chemical to generate list
                 if(input_chemical == 'ORE'):
                     ORE_units += input_units_generated
                 else:
-                    chemicals.append([input_chemical,input_units_generated])
+                    generate_chemicals.append([input_chemical,input_units_generated])
 
     return ORE_units
 

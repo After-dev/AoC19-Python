@@ -6,17 +6,17 @@ def minimum_ORE(reactions,total_ORE,freq_FUEL,unused_chemicals={}):
 
     while(total_ORE > 0):
         ORE_units=0
-        chemicals=[['FUEL',freq_FUEL]]
+        generate_chemicals=[['FUEL',freq_FUEL]]
 
-        while(len(chemicals) > 0):
-            # Get next chemical to search
-            [chemical,units_needed]=chemicals.pop(0)
+        while(len(generate_chemicals) > 0):
+            # Get next chemical to generate
+            [chemical,units_needed]=generate_chemicals.pop(0)
 
             # Try to reduce units_needed with unused chemicals
             if(chemical in unused_chemicals):
-                available=unused_chemicals[chemical]
-                if(units_needed >= available):
-                    units_needed -= unused_chemicals[chemical]
+                unused=unused_chemicals[chemical]
+                if(units_needed >= unused):
+                    units_needed -= unused
                     del unused_chemicals[chemical]
                 else:
                     unused_chemicals[chemical] -= units_needed
@@ -42,26 +42,31 @@ def minimum_ORE(reactions,total_ORE,freq_FUEL,unused_chemicals={}):
                     # Compute units to generate
                     input_units_generated=p*int(input_units)
 
-                    # Search new chemicals
+                    # Add input chemical to generate list
                     if(input_chemical == 'ORE'):
                         ORE_units += input_units_generated
                     else:
-                        chemicals.append([input_chemical,input_units_generated])
+                        generate_chemicals.append([input_chemical,input_units_generated])
 
+        # Update total_ORE
         total_ORE-=ORE_units
         if(total_ORE < 0):
             total_ORE+=ORE_units
             break
 
-        cont+=1
+        cont+=freq_FUEL
 
     return [total_ORE,unused_chemicals,cont]
 
 def max_FUEL(reactions,total_ORE):
+    # Speed of calculate
     freq_FUEL=1000
+
+    # Fast calculate
     [total_ORE,unused_chemicals,cont1]=minimum_ORE(reactions,total_ORE,freq_FUEL)
+    # Slow calculate
     [_,_,cont2]=minimum_ORE(reactions,total_ORE,1,unused_chemicals)
-    return cont1*freq_FUEL+cont2
+    return cont1+cont2
 
 
 
