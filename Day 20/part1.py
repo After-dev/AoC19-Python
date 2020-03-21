@@ -1,70 +1,106 @@
-def find_portal(maze,portal,point=None):
+def find_portals(maze):
+    portals={}
+
     for row in range(len(maze)-1):
         for col in range(len(maze[0])-1):
+            # Get current_value from field
             current_value=maze[row][col]
-            down_value=maze[row+1][col]
-            right_value=maze[row][col+1]
 
-            # If current+down is equal to portal
-            if(current_value+down_value == portal):
-                # Verify top field
-                if(row > 1 and maze[row-1][col] == '.'):
-                    if((row-1,col) != point):
-                        return (row-1,col)
-                elif((row+2,col) != point):
-                        return (row+2,col)
+            # If current_value is a letter, check portal
+            if(current_value.isalpha()):
+                portal=None
+                # Get adjacent values
+                down_value=maze[row+1][col]
+                right_value=maze[row][col+1]
 
-            # If current+right is equal to portal
-            if(current_value+right_value == portal):
-                if(col > 1 and maze[row][col-1] == '.'):
-                    if((row,col-1) != point):
-                        return (row,col-1)
-                elif((row,col+2) != point):
-                    return (row,col+2)
-    return None
+                # If down is a letter, there is a portal!
+                if(down_value.isalpha()):
+                    portal=current_value+down_value
+                # If right is a letter, there is a portal!
+                if(right_value.isalpha()):
+                    portal=current_value+right_value
+
+                # Add portal to portals
+                if(portal != None):
+                    # Get pos
+                    pos=(-1,-1)
+                    # Top
+                    if(maze[(row-1)%len(maze)][col] == '.'):
+                        pos=((row-1)%len(maze),col)
+                    # Bot
+                    elif(maze[(row+2)%len(maze)][col] == '.'):
+                        pos=((row+2)%len(maze),col)
+                    # Left
+                    elif(maze[row][(col-1)%len(maze[0])] == '.'):
+                        pos=(row,(col-1)%len(maze[0]))
+                    # Right
+                    elif(maze[row][(col+2)%len(maze[0])] == '.'):
+                        pos=(row,(col+2)%len(maze[0]))
+
+                    if(portal not in portals):
+                        portals[portal]=[pos]
+                    else:
+                        portals[portal].append(pos)
+
+    return portals
 
 
-def fewest_path(maze):
+def maze_to_graph(maze):
     directions=[[1,0],[-1,0],[0,1],[0,-1]]
-    visited={}
+    graph={}
 
-    # Get start pos
-    start_pos=find_portal(maze,'AA')
-    end_pos=find_portal(maze,'ZZ')
-    visited[start_pos]=0
+    # Get portals and positions
+    portals=find_portals(maze)
 
-    # Populate graph
-    queue=[start_pos]
-    while(len(queue) != 0):
-        # Get current pos
-        current_pos=queue.pop(0)
+    # For each node, see reachable portals
+    for current_portal in portals:
+        for pos in portals[current_portal]:
+            queue=[[pos,pos,0]]
+            while(len(queue) != 0):
+                # Get current pos
+                [prev_pos,current_pos,current_steps]=queue.pop()
 
-        # Generate adjacent pos
-        for d in directions:
-            next_pos=(current_pos[0]+d[0],current_pos[1]+d[1])
-            next_field=maze[next_pos[0]][next_pos[1]]
+                # Generate adjacent pos
+                for d in directions:
+                    next_pos=(current_pos[0]+d[0],current_pos[1]+d[1])
+                    next_field=maze[next_pos[0]][next_pos[1]]
 
-            # If next pos is portal, calculate next_pos again
-            if(next_field != '#' and next_field != '.'):
-                if(d == [-1,0] or d == [0,-1]):
-                    portal=maze[next_pos[0]+d[0]][next_pos[1]+d[1]]+maze[next_pos[0]][next_pos[1]]
-                else:
-                    portal=maze[next_pos[0]][next_pos[1]]+maze[next_pos[0]+d[0]][next_pos[1]+d[1]]
-                next_pos=find_portal(maze,portal,current_pos)
+                    # If next pos is portal, calculate next_pos again
+                    if(next_field.isalpha()):
+                        if(d == [-1,0] or d == [0,-1]):
+                            portal=maze[next_pos[0]+d[0]][next_pos[1]+d[1]]+maze[next_pos[0]][next_pos[1]]
+                        else:
+                            portal=maze[next_pos[0]][next_pos[1]]+maze[next_pos[0]+d[0]][next_pos[1]+d[1]]
+                        # Add portal to graph
+                        if(portal != current_portal):
+                            if(current_portal not in graph):
+                                graph[current_portal]=[[portal,current_steps+1]]
+                            else:
+                                graph[current_portal].append([portal,current_steps+1])
+                    # If next pos is empty
+                    elif(next_pos != prev_pos and next_field == '.'):
+                        queue.append([current_pos,next_pos,current_steps+1])
 
-            if(next_pos != None and next_field != '#'):
-                # If next_pos is visited
-                if(next_pos in visited):
-                    # Continue for highest path
-                    if(visited[next_pos] > visited[current_pos]+1):
-                        visited[next_pos]=visited[current_pos]+1
-                        queue.append(next_pos)
-                # Not visited
-                else:
-                    visited[next_pos]=visited[current_pos]+1
-                    queue.append(next_pos)
+    return graph
 
-    return visited[end_pos]
+
+def fewest_path(graph):
+    distances={}
+
+    distances['AA']=0
+    queue=['AA']
+    while(len(queue) > 0):
+        # Get current node
+        current_node=queue.pop()
+
+        # Calculate next nodes
+        for [next_node,distance] in graph[current_node]:
+            new_distance=distances[current_node]+distance
+            if(next_node not in distances or distances[next_node] > new_distance):
+                distances[next_node] = new_distance
+                queue.append(next_node)
+
+    return distances['ZZ']-1
 
 
 
@@ -91,7 +127,8 @@ maze=[
     '             Z       ',
     '             Z       '
 ]
-print(fewest_path(maze))
+graph=maze_to_graph(maze)
+print(fewest_path(graph))
 
 maze=[
     '                   A               ',
@@ -132,7 +169,8 @@ maze=[
     '           B   J   C               ',
     '           U   P   P               '
 ]
-print(fewest_path(maze))
+graph=maze_to_graph(maze)
+print(fewest_path(graph))
 
 
 
@@ -145,7 +183,8 @@ file = open('./input.data', 'r')
 maze = file.readlines()
 
 # Calculate the solution
-solution=fewest_path(maze)
+graph=maze_to_graph(maze)
+solution=fewest_path(graph)
 
 # Print the solution
 print(solution)
