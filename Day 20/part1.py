@@ -67,28 +67,44 @@ def maze_to_graph(maze):
 
                     # If next pos is portal, calculate next_pos again
                     if(next_field.isalpha()):
+                        # Get portal name
                         if(d == [-1,0] or d == [0,-1]):
                             portal=maze[next_pos[0]+d[0]][next_pos[1]+d[1]]+maze[next_pos[0]][next_pos[1]]
                         else:
                             portal=maze[next_pos[0]][next_pos[1]]+maze[next_pos[0]+d[0]][next_pos[1]+d[1]]
+
+                        # Get portal index
+                        current_index = portals[current_portal].index(pos)
+                        next_index = portals[portal].index(current_pos)
+
                         # Add portal to graph
                         if(portal != current_portal):
-                            if(current_portal not in graph):
-                                graph[current_portal]=[[portal,current_steps+1]]
+                            current_portal_name = current_portal+str(current_index)
+                            next_portal_name = portal+str(next_index)
+                            if(current_portal_name not in graph):
+                                graph[current_portal_name]=[[next_portal_name,current_steps]]
                             else:
-                                graph[current_portal].append([portal,current_steps+1])
+                                graph[current_portal_name].append([next_portal_name,current_steps])
                     # If next pos is empty
                     elif(next_pos != prev_pos and next_field == '.'):
                         queue.append([current_pos,next_pos,current_steps+1])
 
+        # Add jump from portal 0 to 1
+        if(len(portals[current_portal]) == 2):
+            graph[current_portal+'0'].append([current_portal+'1',1])
+            graph[current_portal+'1'].append([current_portal+'0',1])
+
     return graph
 
 
-def fewest_path(graph):
+def fewest_path(maze):
     distances={}
 
-    distances['AA']=0
-    queue=['AA']
+    # Get graph
+    graph=maze_to_graph(maze)
+
+    distances['AA0']=0
+    queue=['AA0']
     while(len(queue) > 0):
         # Get current node
         current_node=queue.pop()
@@ -100,7 +116,7 @@ def fewest_path(graph):
                 distances[next_node] = new_distance
                 queue.append(next_node)
 
-    return distances['ZZ']-1
+    return distances['ZZ0']
 
 
 
@@ -127,8 +143,7 @@ maze=[
     '             Z       ',
     '             Z       '
 ]
-graph=maze_to_graph(maze)
-print(fewest_path(graph))
+print(fewest_path(maze))
 
 maze=[
     '                   A               ',
@@ -169,8 +184,7 @@ maze=[
     '           B   J   C               ',
     '           U   P   P               '
 ]
-graph=maze_to_graph(maze)
-print(fewest_path(graph))
+print(fewest_path(maze))
 
 
 
@@ -183,8 +197,7 @@ file = open('./input.data', 'r')
 maze = file.readlines()
 
 # Calculate the solution
-graph=maze_to_graph(maze)
-solution=fewest_path(graph)
+solution=fewest_path(maze)
 
 # Print the solution
 print(solution)
