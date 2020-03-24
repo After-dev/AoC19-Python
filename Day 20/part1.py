@@ -1,52 +1,34 @@
 def find_portals(maze):
     portals={}
+    directions = {"north": ((0, -2), (0, -1)), "south": ((0, 1), (0, 2)),
+                  "west": ((-2, 0), (-1, 0)), "east": ((1, 0), (2, 0))}
 
-    for row in range(len(maze)-1):
-        for col in range(len(maze[0])-1):
+    for row in range(len(maze)):
+        for col in range(len(maze[0])):
             # Get current_value from field
             current_value=maze[row][col]
 
-            # If current_value is a letter, check portal
-            if(current_value.isalpha()):
-                portal=None
-                # Get adjacent values
-                down_value=maze[row+1][col]
-                right_value=maze[row][col+1]
+            # If current_value is a empty field, check portal
+            if(current_value == '.'):
+                for d in directions:
+                    dx1, dy1 = directions[d][0]
+                    dx2, dy2 = directions[d][1]
+                    c1, c2 = maze[row+dy1][col+dx1], maze[row+dy2][col+dx2]
 
-                # If down is a letter, there is a portal!
-                if(down_value.isalpha()):
-                    portal=current_value+down_value
-                # If right is a letter, there is a portal!
-                if(right_value.isalpha()):
-                    portal=current_value+right_value
-
-                # Add portal to portals
-                if(portal != None):
-                    # Get pos
-                    pos=(-1,-1)
-                    # Top
-                    if(maze[(row-1)%len(maze)][col] == '.'):
-                        pos=((row-1)%len(maze),col)
-                    # Bot
-                    elif(maze[(row+2)%len(maze)][col] == '.'):
-                        pos=((row+2)%len(maze),col)
-                    # Left
-                    elif(maze[row][(col-1)%len(maze[0])] == '.'):
-                        pos=(row,(col-1)%len(maze[0]))
-                    # Right
-                    elif(maze[row][(col+2)%len(maze[0])] == '.'):
-                        pos=(row,(col+2)%len(maze[0]))
-
-                    if(portal not in portals):
-                        portals[portal]=[pos]
-                    else:
+                    # If c1 and c2 are letters, this is portal
+                    if(c1.isalpha() and c2.isalpha()):
+                        portal = c1+c2
+                        pos = (row,col)
+                        if(portal not in portals):
+                            portals[portal]=[]
                         portals[portal].append(pos)
 
     return portals
 
 
 def maze_to_graph(maze):
-    directions=[[1,0],[-1,0],[0,1],[0,-1]]
+    directions = {"north": (0, -1), "south": (0, 1),
+                  "west": (-1, 0), "east": (1, 0)}
     graph={}
 
     # Get portals and positions
@@ -61,14 +43,14 @@ def maze_to_graph(maze):
                 [prev_pos,current_pos,current_steps]=queue.pop()
 
                 # Generate adjacent pos
-                for d in directions:
+                for d in directions.values():
                     next_pos=(current_pos[0]+d[0],current_pos[1]+d[1])
                     next_field=maze[next_pos[0]][next_pos[1]]
 
                     # If next pos is portal, calculate next_pos again
                     if(next_field.isalpha()):
                         # Get portal name
-                        if(d == [-1,0] or d == [0,-1]):
+                        if(d == (-1,0) or d == (0,-1)):
                             portal=maze[next_pos[0]+d[0]][next_pos[1]+d[1]]+maze[next_pos[0]][next_pos[1]]
                         else:
                             portal=maze[next_pos[0]][next_pos[1]]+maze[next_pos[0]+d[0]][next_pos[1]+d[1]]
@@ -194,7 +176,7 @@ print(fewest_path(maze))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-maze = file.readlines()
+maze = [l[:-1] for l in file.readlines()]
 
 # Calculate the solution
 solution=fewest_path(maze)
