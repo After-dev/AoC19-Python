@@ -84,10 +84,16 @@ Here, `AA` has no direct path to `ZZ`, but it does connect to `AS` and `CP`. By 
 In your maze, **how many steps does it take to get from the open tile marked `AA` to the open tile marked `ZZ`?**
 
 ### Solution
+For this problem, we are going to get a graph from the maze.
+
+First, the `position of each portal` is obtained. For each field from the maze (`.`), the two adjacent fields in every direction (`north`, `south`, `west`, `east`) are evaluated, as can be seen in next figure:
+
+![](./images/5.jpg=100x)
+
 My solution is: `448`
 
 
-## Part 2
+##Part 2
 https://adventofcode.com/2019/day/20#part2
 
 ### Description

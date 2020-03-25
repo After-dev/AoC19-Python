@@ -1,10 +1,11 @@
+# Get all portals and their position in the maze
 def find_portals(maze):
     portals={}
     directions = {"north": ((0, -2), (0, -1)), "south": ((0, 1), (0, 2)),
                   "west": ((-2, 0), (-1, 0)), "east": ((1, 0), (2, 0))}
 
     for row in range(len(maze)):
-        for col in range(len(maze[0])):
+        for col in range(len(maze[row])):
             # Get current_value from field
             current_value=maze[row][col]
 
@@ -26,53 +27,43 @@ def find_portals(maze):
     return portals
 
 
+# Transform the maze into a graph, in which each node has (portal_name, list([next_portal, distance]))
 def maze_to_graph(maze):
-    directions = {"north": (0, -1), "south": (0, 1),
-                  "west": (-1, 0), "east": (1, 0)}
+    directions = {"north": ((0, -2), (0, -1)), "south": ((0, 1), (0, 2)),
+                  "west": ((-2, 0), (-1, 0)), "east": ((1, 0), (2, 0))}
     graph={}
 
     # Get portals and positions
     portals=find_portals(maze)
 
-    # For each node, see reachable portals
+    # For each portal, see other reachable portals
     for current_portal in portals:
-        for pos in portals[current_portal]:
+        for i,pos in enumerate(portals[current_portal]):
             queue=[[pos,pos,0]]
             while(len(queue) != 0):
                 # Get current pos
                 [prev_pos,current_pos,current_steps]=queue.pop()
 
                 # Generate adjacent pos
-                for d in directions.values():
-                    next_pos=(current_pos[0]+d[0],current_pos[1]+d[1])
-                    next_field=maze[next_pos[0]][next_pos[1]]
+                for d in directions:
+                    dx1, dy1 = directions[d][0]
+                    dx2, dy2 = directions[d][1]
+                    c1, c2 = maze[current_pos[0]+dy1][current_pos[1]+dx1], maze[current_pos[0]+dy2][current_pos[1]+dx2]
+                    next_pos = (current_pos[0]+dx1,current_pos[1]+dy1) if(d == "south" or d == "east") else (current_pos[0]+dx2,current_pos[1]+dy2)
 
-                    # If next pos is portal, calculate next_pos again
-                    if(next_field.isalpha()):
-                        # Get portal name
-                        if(d == (-1,0) or d == (0,-1)):
-                            portal=maze[next_pos[0]+d[0]][next_pos[1]+d[1]]+maze[next_pos[0]][next_pos[1]]
-                        else:
-                            portal=maze[next_pos[0]][next_pos[1]]+maze[next_pos[0]+d[0]][next_pos[1]+d[1]]
-
-                        # Get portal index
-                        current_index = portals[current_portal].index(pos)
-                        next_index = portals[portal].index(current_pos)
-
-                        # Add portal to graph
-                        if(portal != current_portal):
-                            current_portal_name = current_portal+str(current_index)
-                            next_portal_name = portal+str(next_index)
-                            if(current_portal_name not in graph):
-                                graph[current_portal_name]=[[next_portal_name,current_steps]]
-                            else:
-                                graph[current_portal_name].append([next_portal_name,current_steps])
+                    # If c1 and c2 are letters, this is portal
+                    if(c1.isalpha() and c2.isalpha() and c1+c2 != current_portal):
+                        current_portal_name = current_portal+str(i)
+                        next_portal_name = c1+c2+str(portals[c1+c2].index(current_pos))
+                        if(current_portal_name not in graph):
+                            graph[current_portal_name]=[]
+                        graph[current_portal_name].append([next_portal_name,current_steps])
                     # If next pos is empty
-                    elif(next_pos != prev_pos and next_field == '.'):
+                    elif(next_pos != prev_pos and maze[next_pos[0]][next_pos[1]] == '.'):
                         queue.append([current_pos,next_pos,current_steps+1])
 
         # Add jump from portal 0 to 1
-        if(len(portals[current_portal]) == 2):
+        if(i == 1):
             graph[current_portal+'0'].append([current_portal+'1',1])
             graph[current_portal+'1'].append([current_portal+'0',1])
 
