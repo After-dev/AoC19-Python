@@ -89,7 +89,7 @@ For this problem, we are going to get a **graph** from the maze.
 First, the **position of each portal** is obtained. For each field from the maze (`.`), the two adjacent fields in every direction (`north`, `south`, `west`, `east`) are evaluated, as can be seen in next figure:
 
 <div align="center">
-    <img src="./images/Fig-1.png" width=300>
+    <img src="./images/Fig-1.png" width=200>
 </div>
 
 When **two adjacent fields** are letters, there is a **portal** in that position of the maze. This position is added to corresponding portal (**each portal has two positions** except `AA` and `ZZ`, origin and destination respectively).
