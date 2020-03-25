@@ -88,7 +88,7 @@ For this problem, we are going to get a graph from the maze.
 
 First, the `position of each portal` is obtained. For each field from the maze (`.`), the two adjacent fields in every direction (`north`, `south`, `west`, `east`) are evaluated, as can be seen in next figure:
 
-![](./images/5.jpg=100x)
+![](./images/5.jpg =100x)
 
 My solution is: `448`
 
