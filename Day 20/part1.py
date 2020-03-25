@@ -77,17 +77,18 @@ def fewest_path(maze):
     graph=maze_to_graph(maze)
 
     distances['AA0']=0
-    queue=['AA0']
+    queue=[['AA0',False]]
     while(len(queue) > 0):
         # Get current node
-        current_node=queue.pop()
+        [current_node,jump]=queue.pop()
 
         # Calculate next nodes
         for [next_node,distance] in graph[current_node]:
-            new_distance=distances[current_node]+distance
-            if(next_node not in distances or distances[next_node] > new_distance):
-                distances[next_node] = new_distance
-                queue.append(next_node)
+            if((jump and distance == 1) or (not jump and distance != 1)):
+                new_distance=distances[current_node]+distance
+                if(next_node not in distances or distances[next_node] > new_distance):
+                    distances[next_node] = new_distance
+                    queue.append([next_node, not jump])
 
     return distances['ZZ0']
 
