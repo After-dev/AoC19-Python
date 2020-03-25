@@ -96,15 +96,15 @@ When **two adjacent fields** are letters, there is a **portal** in that position
 
 After we get position of all portals, now the **distance** from each portal to other reachable portals is computed. **Each portal appears twice** in the maze (each pair of portals are **linked** by step of `1`), so each one generates two nodes in the graph. For example, if portal is **`BC`**, it generates **`BC0`** (point `(6,9)`) and **`BC1`** (point `(8,2)`).
 
-The graph for the `example 1` is the following:
+The graph for the **`example 1`** is the following:
 
 <div align="center">
     <img src="./images/Fig-2.png" width=800>
 </div>
 
-Now is a **graph problem**. This problem can be solved by using [Dijkstra algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), but in this case I do not use it. I simulate a person walking in a maze. We start at `AA`, walk to a portal and jump to opposite side of portal. This process is repeated while next node is not `ZZ` or has not another `shorter path`. At the end we obtain the shortest path from `AA` to `ZZ`.
+Now is a **graph problem**. This problem can be solved by using [Dijkstra algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), but in this case I do not use it. I simulate a person walking in a maze. We start at `AA`, walk to a portal and jump to opposite side of portal. This process is repeated while next node is not `ZZ` or has not another `shorter path`. At the end we obtain the **shortest path** from `AA` to `ZZ`.
 
-The result for my input data is: `448`
+Result for my input data is: `448`
 
 
 ## Part 2
@@ -236,4 +236,22 @@ This path takes a total of **396** steps to move from `AA` at the outermost laye
 In your maze, when accounting for recursion, **how many steps does it take to get from the open tile marked `AA` to the open tile marked `ZZ`, both at the outermost layer?**
 
 ### Solution
-My solution is: `5678`
+In part 2, when we pass through a portal, our current level change:
+* If the portal is outside of donut, **level decreases** in `1`.
+* If the portal is inside of donut, **level increases** in `1`.
+
+We start in **`level 0`** at portal `AA`. The objective is reach the node `ZZ` at `level 0`, considering the level increasing and decreasing. In addition, **current level can not be negative**.
+
+In this case, the increase or decrease of level is implemented by **adding to each link a value** that is added to current level when we move from one node to another. **Current level not change** until we pass through a portal, so links between nodes in the same level has a value of `0`. If we enter in an **outside portal**, level decreases (`-1`). On the other hand, if we enter in an **inside portal**, level increases (`+1`).
+
+If we apply this new implementation to previous graph for **`example 1`**, we obtain the next graph:
+
+<div align="center">
+    <img src="./images/Fig-3.png" width=800>
+</div>
+
+Pass from `AA` to `BC0` not modify current level because we have not passed through a portal. If we go from `BC0` to `BC1`, we pass through an inside portal (`BC0`), so current level increases in `1`. If we go back from `BC1` to `BC0`, we pass through an outside portal (`BC1`), so current level decreases in `1`. We must find the **shortest path** to node `ZZ` at `level 0`.
+
+This problem is solved in the same form as part 1, but considering the **current level**. In addition, **max number of steps** has to be considered because normally there are **loops** in the graph.
+
+Result for my input data is: `5678`
