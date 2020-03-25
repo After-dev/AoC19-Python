@@ -89,7 +89,7 @@ For this problem, we are going to get a **graph** from the maze.
 First, the **position of each portal** is obtained. For each field from the maze (`.`), the two adjacent fields in every direction (`north`, `south`, `west`, `east`) are evaluated, as can be seen in next figure:
 
 <div align="center">
-    <img src="./images/Fig-1.png" width=600>
+    <img src="./images/Fig-1.png" width=100>
 </div>
 
 When **two adjacent fields** are letters, there is a **portal** in that position of the maze. This position is added to corresponding portal (**each portal has two positions** except `AA` and `ZZ`, origin and destination respectively).
@@ -99,7 +99,7 @@ After we get position of all portals, now the **distance** from each portal to o
 The graph for the `example 1` is the following:
 
 <div align="center">
-    <img src="./images/Fig-2.png" width=600>
+    <img src="./images/Fig-2.png" width=800>
 </div>
 
 Now is a **graph problem**. This problem can be solved by using [Dijkstra algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), but in this case I do not use it. I simulate a person walking in a maze. We start at `AA`, walk to a portal and jump to opposite side of portal. This process is repeated while next node is not `ZZ` or has not another `shorter path`. At the end we obtain the shortest path from `AA` to `ZZ`.
