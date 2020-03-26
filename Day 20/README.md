@@ -84,27 +84,54 @@ Here, `AA` has no direct path to `ZZ`, but it does connect to `AS` and `CP`. By 
 In your maze, **how many steps does it take to get from the open tile marked `AA` to the open tile marked `ZZ`?**
 
 ### Solution
-For this problem, we are going to get a **graph** from the maze.
+To solve this problem we are going to get a **graph** from the maze.
 
-First, the **position of each portal** is obtained. For each field from the maze (`.`), the two adjacent fields in every direction (`north`, `south`, `west`, `east`) are evaluated, as can be seen in next figure:
+First, the **position (row,col) of each portal** is obtained. For each field from the maze (`.`), the two adjacent fields in every direction (`north`, `south`, `west`, `east`) are evaluated, as can be seen in next figure:
 
 <div align="center">
     <img src="./images/Fig-1.png" width=200>
 </div>
 
-When **two adjacent fields** are letters, there is a **portal** in that position of the maze. This position is added to corresponding portal (**each portal has two positions** except `AA` and `ZZ`, origin and destination respectively).
+When **two adjacent fields** are letters, there is a **portal** in that position of the maze. This position is added to corresponding portal (**each portal has two positions** except `AA` and `ZZ`, origin and destination respectively). After analyzing all positions from the maze, we have the following dict structure:
+```
+{
+    "AA": [[2,9]],
+    "BC": [[6,9], [8,2]],
+    "DE": [[10,6], [13,2]],
+    "FG": [[15,2], [12,11]],
+    "ZZ": [[16,13]]
+}
+```
 
-After we get position of all portals, now the **distance** from each portal to other reachable portals is computed. **Each portal appears twice** in the maze (each pair of portals are **linked** by step of `1`), so each one generates two nodes in the graph. For example, if portal is **`BC`**, it generates **`BC0`** (point `(6,9)`) and **`BC1`** (point `(8,2)`).
+After we get position of all portals, now the **distance** from each portal to other reachable portals is computed. **Each portal appears twice** in the maze (each pair of portals are **linked** by step of `1`), so each one generates two nodes in the graph. For example, if portal is **`BC`**, it generates **`BC0`** (point `(6,9)`) and **`BC1`** (point `(8,2)`). To compute distances, we start in position of portal `AA`, move for the maze (**without go back**) until reachable portals (`BC0`, `FG0` and `ZZ`) and store **distance in steps** to each one. After this we continue with portal `BC0` and then with `BC1`. Repeat until all portals have been evaluated. This generate the following dict structure:
+```
+{
+    "AA": [["BC0", 4], ["FG0", 30], ["ZZ", 26]],
+    "BC0": [["BC1", 1], ["FG0", 32], ["ZZ", 28]],
+    "BC1": [["BC0", 1], ["DE0", 6]],
+    "DE0": [["DE1", 1], ["BC1", 6]],
+    "DE1": [["DE0", 1], ["FG1", 4]],
+    "FG0": [["FG1", 1], ["BC0", 32], ["ZZ", 6]],
+    "FG1": [["FG0", 1], ["DE1", 4]],
+    "ZZ": [["FG0", 6], ["BC0", 28]]
+}
+```
 
-The graph for the **`example 1`** is the following:
+Previous dict structure is our graph. It contains distance from each node to next nodes. The graph for the **`example 1`** is the following:
 
 <div align="center">
     <img src="./images/Fig-2.png" width=800>
 </div>
 
-Now is a **graph problem**. This problem can be solved by using [Dijkstra algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), but in this case I do not use it. I simulate a person walking in a maze. We start at `AA`, walk to a portal and jump to opposite side of portal. This process is repeated while next node is not `ZZ` or has not another `shorter path`. At the end we obtain the **shortest path** from `AA` to `ZZ`.
+The graph for the **`example 2`** is the following:
 
-Result for my input data is: `448`
+<div align="center">
+    <img src="./images/Fig-3.png" width=800>
+</div>
+
+Now our problem is a **graph problem**. This problem can be solved by using [Dijkstra algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), but in this case, I do not use it. I simulate a person walking in a maze. We start at node `AA`, walk to one of possible next node (**without go back to previous node**) and jump to opposite side of portal. This process is repeated while next node is not `ZZ` or has not another `shorter path`. At the end we obtain the **shortest path** from `AA` to `ZZ`.
+
+Result for my input data is: **`448`**
 
 
 ## Part 2
@@ -240,18 +267,36 @@ In part 2, when we pass through a portal, our current level change:
 * If the portal is outside of donut, **level decreases** in `1`.
 * If the portal is inside of donut, **level increases** in `1`.
 
-We start in **`level 0`** at portal `AA`. The objective is reach the node `ZZ` at `level 0`, considering the level increasing and decreasing. In addition, **current level can not be negative**.
+We start in **`level 0`** at portal `AA`. The objective is to reach the node `ZZ` at `level 0`, considering the level increasing and decreasing. In addition, **current level cannot be negative**.
 
 In this case, the increase or decrease of level is implemented by **adding to each link a value** that is added to current level when we move from one node to another. **Current level not change** until we pass through a portal, so links between nodes in the same level has a value of `0`. If we enter in an **outside portal**, level decreases (`-1`). On the other hand, if we enter in an **inside portal**, level increases (`+1`).
 
-If we apply this new implementation to previous graph for **`example 1`**, we obtain the next graph:
+If we apply this new implementation to previous graph for **`example 1`**, we obtain the next dict structure and graph:
+```
+{
+    "AA": [["BC0", 4, 0], ["FG0", 30, 0], ["ZZ", 26, 0]],
+    "BC0": [["BC1", 1, +1], ["FG0", 32, 0], ["ZZ", 28, 0]],
+    "BC1": [["BC0", 1, -1], ["DE0", 6, 0]],
+    "DE0": [["DE1", 1, +1], ["BC1", 6, 0]],
+    "DE1": [["DE0", 1, -1], ["FG1", 4, 0]],
+    "FG0": [["FG1", 1, +1], ["BC0", 32, 0], ["ZZ", 6, 0]],
+    "FG1": [["FG0", 1, -1], ["DE1", 4, 0]],
+    "ZZ": [["FG0", 6, 0], ["BC0", 28, 0]]
+}
+```
 
 <div align="center">
-    <img src="./images/Fig-3.png" width=800>
+    <img src="./images/Fig-4.png" width=800>
+</div>
+
+Graph for **`example 3`** is the following:
+
+<div align="center">
+    <img src="./images/Fig-5.png" width=800>
 </div>
 
 Pass from `AA` to `BC0` not modify current level because we have not passed through a portal. If we go from `BC0` to `BC1`, we pass through an inside portal (`BC0`), so current level increases in `1`. If we go back from `BC1` to `BC0`, we pass through an outside portal (`BC1`), so current level decreases in `1`. We must find the **shortest path** to node `ZZ` at `level 0`.
 
 This problem is solved in the same form as part 1, but considering the **current level**. In addition, **max number of steps** has to be considered because normally there are **loops** in the graph.
 
-Result for my input data is: `5678`
+Result for my input data is: **`5678`**
