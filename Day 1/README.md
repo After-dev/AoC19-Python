@@ -26,7 +26,11 @@ The Fuel Counter-Upper needs to know the total fuel requirement. To find it, ind
 **What is the sum of the fuel requirements** for all of the modules on your spacecraft (input.data)?
 
 ### Solution
-My solution is: `3382284`
+This problem is solved by applying the following formula: **`fuel_required=floor(mass/3)-2`**
+
+With this formula, we use a **loop** to compute the fuel_required of each mass and finally sum all obtained values to get the result of this problem.
+
+Result for my input data is: `3382284`
 
 ## Part 2
 
@@ -45,4 +49,8 @@ So, for each module mass, calculate its fuel and add it to the total. Then, trea
 **What is the sum of the fuel requirements** for all of the modules on your spacecraft when also taking into account the mass of the added fuel? (Calculate the fuel requirements for each module separately, then add them all up at the end.)
 
 ### Solution
-My solution is: `5070541`
+In this part, when we add fuel required for a mass, this **add more mass**. For this reason, **more fuel is needed**. This is repeated until the fuel_requirement is **less or equal to `0`**.
+
+For implement this we use a **recursive function** with the previous formula.
+
+Result for my input data is: `5070541`
