@@ -50,7 +50,9 @@ Here are a few more examples:
 **What is the Manhattan distance** from the central port to the closest intersection?
 
 ### Solution
-My solution is: `386`
+To solve this problem, we have to **get all points** from each wire and get **matching points**. After this, the **distance** of each matching point is calculated and the **minimum distance** is returned.
+
+Result for my input data is: `386`
 
 
 ## Part 2
@@ -88,4 +90,6 @@ Here are the best steps for the extra examples from above:
 **What is the fewest combined steps the wires must take to reach an intersection?**
 
 ### Solution
-My solution is: `6484`
+In this case, we search the fewest intersection, so we add the **number of steps** to each point when we generate them.
+
+Result for my input data is: `6484`

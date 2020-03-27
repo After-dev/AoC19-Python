@@ -47,13 +47,7 @@ def manhattan_distance(wire1,wire2):
     cross_points= list(set(wire1_points) & set(wire2_points))
 
     # Calculate distance between cross points and origin
-    distances=[]
-    for cross_point in cross_points:
-        x=int(cross_point[0])
-        y=int(cross_point[1])
-
-        md=np.abs(x)+np.abs(y)
-        distances.append(md)
+    distances=[np.abs(cross_points[i][0]) + np.abs(cross_points[i][1]) for i in range(len(cross_points))]
 
     # Return shortest distance
     return np.min(distances)
@@ -82,9 +76,9 @@ print(manhattan_distance(wire1,wire2))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()
-wire1=lines[0][:-1]
-wire2=lines[1][:-1]
+wires = file.readlines()
+wire1=wires[0][:-1]
+wire2=wires[1][:-1]
 
 # Calculate the solution
 print(manhattan_distance(wire1,wire2))

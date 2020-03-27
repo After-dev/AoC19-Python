@@ -78,9 +78,9 @@ print(manhattan_distance(wire1,wire2))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()
-wire1=lines[0][:-1]
-wire2=lines[1][:-1]
+wires = file.readlines()
+wire1=wires[0][:-1]
+wire2=wires[1][:-1]
 
 # Calculate the solution
 print(manhattan_distance(wire1,wire2))
