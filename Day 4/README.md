@@ -23,7 +23,15 @@ Other than the range rule, the following are true:
 Your puzzle input is `134792-675810`.
 
 ### Solution
-My solution is: `1955`
+To solve this problem I am going to implement a **validation function** that evaluates a password and **returns if it is valid or not**. This function evaluates each digit of the password from the **position 0** until the **last position**, one by one. At each position, **I compare the current digit with the previous one**. All digits must satisfy the following conditions:
+* **Always increase**: If any current digit is less than previous, it satisfies the never decrease condition.
+* **Two adjacent digit are the same**: If any current digit is equal to the previous, it satisfies this condition.
+
+When all digits have been evaluated, it is a **valid password** if the two conditions are satisfied. In otherwise, the password is not valid.
+
+In this case, I **generate all possible password** inside the range with a loop and **evaluate each one**. The result is the **number of valid passwords** from generated passwords.
+
+Result for my input data is: `1955`
 
 
 ## Part 2
@@ -42,4 +50,10 @@ Given this additional criterion, but still ignoring the range rule, the followin
 Your puzzle input is still `134792-675810`.
 
 ### Solution
-My solution is: `1319`
+In this part the **second criteria is modified**. Now a password satisfy this condition only if it has a digit that is repeated **exactly twice**. For example:
+* `11123` not satisfies the condition because there is not a digit that is repeated twice.
+* `11122` satisfies the condition, because the digit 2 is repeated exactly twice.
+
+To solve this part I change the validation function. Now when a digit appear repeated, **I store the number of occurrences for each digit**. At the end, if any digit has appeared twice, this condition is satisfied.
+
+Result for my input data is: `1319`
