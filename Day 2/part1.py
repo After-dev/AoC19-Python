@@ -48,8 +48,7 @@ print(intcode_program(intcode))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode=[int(i) for i in line]
+intcode=[int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Change initial values
 intcode[1]=12

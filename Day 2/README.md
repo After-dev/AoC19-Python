@@ -60,7 +60,16 @@ Here are the initial and final states of a few more small programs:
 Once you have a working computer, the first step is to restore the gravity assist program (your puzzle input) to the "1202 program alarm" state it had just before the last computer caught fire. To do this, **before running the program**, replace position `1` with the value `12` and replace position `2` with the value `2`. **What value is left at position `0`** after the program halts?
 
 ### Solution
-My solution is: `3058646`
+In this problem we have to create an **intcode_program** that can read an intcode, process it and return a response. The intcode is a **list of integers** separated by commas that contains **instructions**. An instruction consists of one **opcode** and some **argument values**. For this problem we have to implement three instructions:
+* Add: Opcode of this instruction is `1` and it has `3` arguments. Arguments 1 and 2 indicate the position of the values to sum and argument 3 indicate the output position.
+* Multiply: Opcode of this instruction is `1` and it has `3` arguments. Arguments 1 and 2 indicate the position of the values to multiply and argument 3 indicate the output position.
+* Stop: Opcode of this instruction is `99` and it has `0` arguments. This instruction indicates the end of the program.
+
+The program has a **pointer** that indicate the current position in the intcode and it start at position `0`. When a instruction is completed, **pointer increases** by length of the instruction (in this case it is always `4`).
+
+Program is running in a loop that process instructions one by one until a `stop` instruction is processed. At the end of processing the value at position `0` is returned.
+
+Result for my input data is: `3058646`
 
 
 ## Part 2
@@ -86,4 +95,6 @@ Once the program has halted, its output is available at address `0`, also just l
 Find the input **noun** and **verb** that cause the program to produce the output `19690720`. **What is `100 * noun + verb`?** (For example, if `noun=12` and `verb=2`, the answer would be `1202`.)
 
 ### Solution
-My solution is (`noun=89` y `verb=76`): `8976`
+In this part we have to use the intcode_program implemented in previous part to find two values (`noun` and `verb`) that output the value `19690720`. These values are in **range [0-99]**. The noun is the value at `position 1` of the intcode and the verb is the value at `position 2`. We have to try all possible values until the output is `19690720`.
+
+Result for my input data is: `8976` (`noun=89` y `verb=76`)

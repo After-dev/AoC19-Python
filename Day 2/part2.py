@@ -29,8 +29,7 @@ def intcode_program(intcode):
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode=[int(i) for i in line]
+intcode=[int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 for noun in range(100):
@@ -44,7 +43,7 @@ for noun in range(100):
             solution=100*noun+verb
 
             # Print the solution
+            print("-noun: "+str(noun))
+            print("-verb: "+str(verb))
             print(solution)
-            #print("-noun: "+noun.__str__())
-            #print("-verb: "+verb.__str__())
             break
