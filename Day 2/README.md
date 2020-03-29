@@ -61,9 +61,9 @@ Once you have a working computer, the first step is to restore the gravity assis
 
 ### Solution
 In this problem we have to create an **intcode_program** that can read an intcode, process it and return a response. The intcode is a **list of integers** separated by commas that contains **instructions**. An instruction consists of one **opcode** and some **argument values**. For this problem we have to implement three instructions:
-* Add: Opcode of this instruction is `1` and it has `3` arguments. Arguments 1 and 2 indicate the position of the values to sum and argument 3 indicate the output position.
-* Multiply: Opcode of this instruction is `1` and it has `3` arguments. Arguments 1 and 2 indicate the position of the values to multiply and argument 3 indicate the output position.
-* Stop: Opcode of this instruction is `99` and it has `0` arguments. This instruction indicates the end of the program.
+* **Add**: Opcode of this instruction is `1` and it has `3` arguments. Arguments 1 and 2 indicate the position of the values to sum and argument 3 indicate the output position.
+* **Multiply**: Opcode of this instruction is `2` and it has `3` arguments. Arguments 1 and 2 indicate the position of the values to multiply and argument 3 indicate the output position.
+* **Stop**: Opcode of this instruction is `99` and it has `0` arguments. This instruction indicates the end of the program.
 
 The program has a **pointer** that indicate the current position in the intcode and it start at position `0`. When a instruction is completed, **pointer increases** by length of the instruction (in this case it is always `4`).
 
