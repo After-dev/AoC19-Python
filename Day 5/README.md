@@ -55,7 +55,13 @@ Finally, the program will output a **diagnostic code** and immediately halt. Thi
 After providing `1` to the only input instruction and passing all the tests, **what diagnostic code does the program produce?**
 
 ### Solution
-My solution is: `9654885`
+To solve this problem, I **add two new instructions** to intcode_program:
+* **Input**: Opcode of this instruction is `3` and it has `1` argument. This argument indicates the position to store an input value.
+* **Output**: Opcode of this instruction is `4` and it has `1` argument. This argument indicates the position of the output value. Value in this position is stored in position `0`.
+
+In addition, **current structure of opcode is modified**. Now opcode is a **five digits number**, in which 3 first digits are `0` or `1` (read in position or immediate mode, respectively), and two last digits indicates the opcode instruction. If there is less than five digits, complete digits with leading zeros. In **position mode**, read argument like previous day (if argument value is 30, the value at position 30 is read). In **immediate mode**, the value of the argument is read directly.
+
+Result for my input data is: `9654885`
 
 
 ## Part 2
@@ -100,4 +106,10 @@ This time, when the TEST diagnostic program runs its input instruction to get th
 **What is the diagnostic code for system ID 5?**
 
 ### Solution
-My solution is: `7079459`
+To solve part 2, I **add four new instructions** to intcode_program:
+* **Jump-if-true**: Opcode of this instruction is `5` and it has `2` arguments. Argument 1 is the position of the value to compare with `0`. Argument 2 indicates the position where pointer jump if the read value in argument 1 is not equal to zero.
+* **Jump-if-false**: Opcode of this instruction is `6` and it has `2` arguments. Argument 1 is the position of the value to compare with `0`. Argument 2 indicates the position where pointer jump if the read value in argument 1 is equal to zero.
+* **Less-than**: Opcode of this instruction is `7` and it has `3` arguments. Arguments 1 and 2 are positions of values to compare. Argument 3 indicates the position where store `1` if value_1 is less than value_2. Otherwise, `0`.
+* **Equal-to**: Opcode of this instruction is `8` and it has `3` arguments. Arguments 1 and 2 are positions of values to compare. Argument 3 indicates the position where store `1` if value_1 is equal to value_2. Otherwise, `0`.
+
+Result for my input data is: `7079459`
