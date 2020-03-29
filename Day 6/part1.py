@@ -44,8 +44,7 @@ print(get_number_orbits(map_data))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()
-map_data=[i[:-1] for i in lines]
+map_data=[i[:-1] for i in file.readlines()]
 
 # Calculate the solution
 solution=get_number_orbits(map_data)

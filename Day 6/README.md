@@ -62,7 +62,39 @@ The total number of direct and indirect orbits in this example is **`42`**.
 **What is the total number of direct and indirect orbits** in your map data?
 
 ### Solution
-My solution is: `142915`
+To solve this problem, I get the **tree with parents** of each object in a dict. For the example, I get the following tree:
+```
+{
+    "B": "COM",
+    "C": "B",
+    "G": "B",
+    "H": "G",
+    "D": "C",
+    "I": "D",
+    "E": "D",
+    "F": "E",
+    "J": "E",
+    "K": "J",
+    "L": "K"
+}
+```
+
+After get this tree, **number of links** from each node until "COM" node is calculated (direct and indirect links). Number of links for the example is:
+* **Node "B"** has `1` link (`B-COM`).
+* **Node "C"** has `2` links (`C-B`, `B-COM`).
+* **Node "D"** has `3` links (`D-C`, `C-B`, `B-COM`).
+* **Node "E"** has `4` links (`E-D`, `D-C`, `C-B`, `B-COM`).
+* **Node "F"** has `5` links (`F-E`, `E-D`, `D-C`, `C-B`, `B-COM`).
+* **Node "G"** has `2` links (`G-B`, `B-COM`).
+* **Node "H"** has `3` links (`H-G`, `G-B`, `B-COM`).
+* **Node "I"** has `4` links (`I-D`, `D-C`, `C-B`, `B-COM`).
+* **Node "J"** has `5` links (`J-E`, `E-D`, `D-C`, `C-B`, `B-COM`).
+* **Node "K"** has `6` links (`K-J`, `J-E`, `E-D`, `D-C`, `C-B`, `B-COM`).
+* **Node "L"** has `7` links (`L-K`, `K-J`, `J-E`, `E-D`, `D-C`, `C-B`, `B-COM`).
+
+Finally, **these values are added** to get the result: `1+2+3+4+5+2+3+4+5+6+7 = 42`
+
+Result for my input data is: `142915`
 
 
 ## Part 2
@@ -123,4 +155,13 @@ COM - B - C - D - E - F
 **What is the minimum number of orbital transfers required** to move from the object `YOU` are orbiting to the object `SAN` is orbiting? (Between the objects they are orbiting - **not** between `YOU` and `SAN`.)
 
 ### Solution
-My solution is: `283`
+In part 2 we have to find the shortest path between `YOU` and `SAN`. To solve this part I compute the path from `SAN` to `COM` and the path from `YOU` to `COM`. In the example, both paths are the following:
+* `SAN-COM`: COM-B-C-D-I-SAN
+* `YOU-COM`: COM-B-C-D-E-J-K-YOU
+
+After I get paths, I start to delete equal nodes from `COM` (in our case COM-B-C-D). The `YOU-COM` path is reversed, last deleted node (`D`) is added and then `SAN-COM` path is appended:
+* `YOU-SAN`: YOU-K-J-E-D-I-SAN
+
+The final result is the **number of links** (links of `SAN` and `YOU` are not counted because this indicates that `YOU` and `SAN` are in object `K` and `I`, respectively). The number of links is the number of nodes decreased by 1. In the example the result is `4`.
+
+Result for my input data is: `283`
