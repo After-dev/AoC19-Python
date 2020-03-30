@@ -116,7 +116,7 @@ Find the best location for a new monitoring station. **How many other asteroids 
 To solve this problem, we use the **slope of the line (`(y2-y1)/(x2-x1)`)**:
 
 <div align="center">
-    <img src="./images/Fig-1.png" width=400>
+    <img src="./images/Fig-1.png" width=300>
 </div>
 
 First, we **get asteroid points** from the map (#). Then we calculate **how many asteroids can be detected** from each asteroid. To do this, we get the **slope** and **quadrant** between each asteroid and others asteroid points. The quadrant is necessary because it **may exist two points in the same line at different side of the station**. If there are several points with the same slope and quadrant, **station only can see one of them** (others are behind the first asteroid).
@@ -202,7 +202,7 @@ The Elves are placing bets on which will be the **200th** asteroid to be vaporiz
 To solve part 2, I calculate **angle and Euclidean distance** from laser for all asteroids. With this information, you can know the **order of shooting**.
 
 <div align="center">
-    <img src="./images/Fig-2.png" width=400>
+    <img src="./images/Fig-2.png" width=300>
 </div>
 
 You cannot shoot two asteroids in the same angle. If there are more than one asteroid in the same angle, **laser destroy the nearest one**. For example, you can destroy asteroid 1, but asteroid 2 cannot be destroyed until the laser rotates 360 degrees.
