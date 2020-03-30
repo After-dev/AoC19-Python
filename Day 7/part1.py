@@ -127,8 +127,7 @@ print(amplify(intcode,phases))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()[0][:-1].split(',')
-intcode=[int(i) for i in lines]
+intcode=[int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 phases=[0,1,2,3,4]

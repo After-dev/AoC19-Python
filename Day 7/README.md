@@ -42,7 +42,17 @@ Here are some example programs:
 Try every combination of phase settings on the amplifiers. **What is the highest signal that can be sent to the thrusters?**
 
 ### Solution
-My solution is: `17790`
+To solve this problem, we have to implement an amplifier system. The amplifier system consists on **five amplifiers** connected as can be see in next figure:
+
+<div align="center">
+    <img src="./images/Fig-1.png" width=800>
+</div>
+
+Output of each amplifier is the input of the next amplifier. In addition, each amplifier has a **phase setting** that is added to the input values. Each classifier gets **two values as input**: the phase setting value (`P1`, `P2`, `P3`, `P4` or `P5`) and the previous output. First amplifier gets `0` as previous output.
+
+To run the system, we give the original intcode and corresponding inputs values (`0` and `first phase value`) to `Amp A`. After this we give the original intcode and corresponding inputs (`output of Amp A` and `second phase value`). This is repeated until we get the output of `Amp E` (solution).
+
+Result for my input data is: `17790`
 
 
 ## Part 2
@@ -80,4 +90,8 @@ Here are some example programs:
 Try every combination of the new phase settings on the amplifier feedback loop. **What is the highest signal that can be sent to the thrusters?**
 
 ### Solution
-My solution is: `19384820`
+In this part, **output of `Amp E` is connected to input of `Amp A`**, generating a loop. In this case, it is necessary to **save the state** (intcode and pointer) of each amplifier. If an output instruction is executed, amplifier **stop the execution**, values for **intcode** and **current pointer** are saved and the **output value is generated** to continue the process in the following amplifier. Whe a new input is received, the amplifier continue the execution until another output instruction.
+
+The process is repeated in a loop until the `Amp E` halts. **Phase setting values are included only in first execution of corresponding amplifier**. The result is the last valid output from `Amp E`.
+
+Result for my input data is: `19384820`
