@@ -42,7 +42,7 @@ Here are some example programs:
 Try every combination of phase settings on the amplifiers. **What is the highest signal that can be sent to the thrusters?**
 
 ### Solution
-To solve this problem, we have to implement an amplifier system. The amplifier system consists on **five amplifiers** connected as can be see in next figure:
+To solve this problem, we have to implement an amplifier system. The amplifier system consists of **five amplifiers** connected as can be seen in next figure:
 
 <div align="center">
     <img src="./images/Fig-1.png" width=800>
@@ -90,8 +90,10 @@ Here are some example programs:
 Try every combination of the new phase settings on the amplifier feedback loop. **What is the highest signal that can be sent to the thrusters?**
 
 ### Solution
-In this part, **output of `Amp E` is connected to input of `Amp A`**, generating a loop. In this case, it is necessary to **save the state** (intcode and pointer) of each amplifier. If an output instruction is executed, amplifier **stop the execution**, values for **intcode** and **current pointer** are saved and the **output value is generated** to continue the process in the following amplifier. Whe a new input is received, the amplifier continue the execution until another output instruction.
+In this part, **output of `Amp E` is connected to input of `Amp A`**, generating a loop. In this case, it is necessary to **save the state** (intcode and pointer) of each amplifier. If an output instruction is executed, amplifier **stop the execution**, values for **intcode** and **current pointer** are saved and the **output value is generated** to continue the process in the following amplifier.
 
-The process is repeated in a loop until the `Amp E` halts. **Phase setting values are included only in first execution of corresponding amplifier**. The result is the last valid output from `Amp E`.
+For example, inputs for `Amp A` are [`P1`, `0`]. `Amp A` process the original intcode until an output instruction (generating output `O1`). `Amp A` saves current intcode and pointer (state `S1`). The process continues in `Amp B`, with [`P2`, `O1`] as inputs. `Amp B` processes the original intcode until an output instruction (generating output `O2`). `Amp B` saves current intcode and pointer (state `S2`). This is repeated until `Amp E`. The output of `Amp E` (`O5`) is the new input for `Amp A`. `Amp A` continues the process from `S1` until a new output or stop instruction. With an output instruction the state is saved and the output value is the new input for `Amp B`. The process is repeated in a loop until the `Amp E` halts.
+
+**Phase setting values are included only in first execution of corresponding amplifier**. The result is the last valid output from `Amp E`.
 
 Result for my input data is: `19384820`
