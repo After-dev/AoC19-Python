@@ -5,18 +5,19 @@ def transform_coors(point):
     point.reverse()
     return point
 
+
 # Traduce map to get points in which object appear
 def get_points(map,object):
     objects=[]
-    rows=len(map)
-    cols=len(map[0])
 
     # Find object in each point of the map
-    for x in range(rows):
-        for y in range(cols):
+    for x in range(len(map)):
+        for y in range(len(map[0])):
             if(map[x][y] == object):
                 objects.append([x,y])
+
     return objects
+
 
 def vaporization(asteroids,laser):
     targets=[]
@@ -129,8 +130,7 @@ print(transform_coors(shoots[298][2]))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()
-asteroid_map=[line[:-1] for line in lines]
+asteroid_map=[line[:-1] for line in file.readlines()]
 
 # Calculate the solution
 laser=[11, 11]
