@@ -40,7 +40,14 @@ The BOOST program will ask for a single input; run it in test mode by providing 
 Once your Intcode computer is fully functional, the BOOST program should report no malfunctioning opcodes when run in test mode; it should only output a single value, the BOOST keycode. **What BOOST keycode does it produce?**
 
 ### Solution
-My solution is: `2789104029`
+In this problem, we **add a new instruction** to intcode_program:
+* **Adjust relative base**: Opcode of this instruction is `9` and it has `1` argument. This argument indicates the position of the `adjust base value`. We add to current base the `adjust base value`.
+
+In addition, we have to add support to read arguments in **relative mode**. For example, if base value is 35 and an argument value is 10, we have to read the value at position `45` (10+35).
+
+Finally, it is necessary to add support for assigning more memory to intcode (we need to use positions of memory out of range of intcode).
+
+Result for my input data is: `2789104029`
 
 
 ## Part 2
@@ -56,4 +63,6 @@ The program runs in sensor boost mode by providing the input instruction the val
 Run the BOOST program in sensor boost mode. **What are the coordinates of the distress signal?**
 
 ### Solution
-My solution is: `32869`
+Part 2 is the same as part 1, but the input value is `2` instead of `1`.
+
+Result for my input data is: `32869`
