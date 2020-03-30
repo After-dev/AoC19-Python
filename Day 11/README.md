@@ -73,7 +73,11 @@ Before you deploy the robot, you should probably have an estimate of the area it
 Build a new emergency hull painting robot and run the Intcode program on it. **How many panels does it paint at least once?**
 
 ### Solution
-My solution is: `1985`
+To solve this problem, we use the intcode_program with a little modification: **output is a list** of values. When an output instruction is executed, the **output is added to a list** and the execution continue until there are a **specific number of outputs** in the list.
+
+To simulate the walk of robot, we need to get **two outputs** from intcode_program each time: **color** and **direction**. Current position is painted with the obtained color and then the robot moves to next position.
+
+Result for my input data is: `1985`
 
 
 ## Part 2
@@ -87,4 +91,6 @@ Checking your external ship cameras again, you notice a white panel marked "emer
 Based on the Space Law Space Brochure that the Space Police attached to one of your windows, a valid registration identifier is always **eight capital letters**. After starting the robot on a single **white panel** instead, **what registration identifier does it paint** on your hull?
 
 ### Solution
-My solution is: `BLCZCJLZ`
+Part 2 is equal to part 1. The difference is in color of start position (**white**). To see the solution, you can **print all panels in console**.
+
+Result for my input data is: `BLCZCJLZ`

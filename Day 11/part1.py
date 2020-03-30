@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def intcode_program(state):
+def intcode_program(state, max_size, n_read):
     output=[]
 
     # Get state
@@ -9,8 +9,6 @@ def intcode_program(state):
     inputs=state[1]
     pointer=state[2]
     relative_base=state[3]
-    max_size=state[4]
-    n_read=state[5]
 
     # Resize array (get more memory)
     intcode_aux=np.resize(intcode_aux,(max_size))
@@ -116,7 +114,7 @@ def painting_robot(intcode):
     pos=(0,0)
     dir=0
     directions=[(1,0),(0,1),(-1,0),(0,-1)]
-    state=[intcode,[],0,0,2000,2]
+    state=[intcode,[],0,0]
 
     # Movement until intcode ends
     while(True):
@@ -125,7 +123,7 @@ def painting_robot(intcode):
         state[1].append(current_color)
 
         # Get color and direction
-        [output,state[0],state[2],state[3]]=intcode_program(state)
+        [output,state[0],state[2],state[3]]=intcode_program(state,2000,2)
         if(len(output) != 2):
             break
 
@@ -147,8 +145,7 @@ def painting_robot(intcode):
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()[0][:-1].split(',')
-intcode=[int(i) for i in lines]
+intcode=[int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 panel=painting_robot(intcode)
