@@ -29,7 +29,11 @@ The image you received is **`25` pixels wide and `6` pixels tall**.
 To make sure the image wasn't corrupted during transmission, the Elves would like you to find the layer that contains the **fewest `0` digits**. On that layer, **what is the number of `1` digits multiplied by the number of `2` digits?**
 
 ### Solution
-My solution is: `1905`
+In this problem, we receive a **sequence of values** that are the **pixels of an image**. In addition, we know `pixels wide` and `pixels tall` from image, so we have to **convert the sequence of values into layers** (each layer is a matrix of wide-tall dimensions). To do this, we read the sequence in order from first to last element. We assign values to matrix of `layer 1` by rows. When a layer is full, we start to assign values to matrix of `layer 2`. This is repeated until last value in the sequence.
+
+When we have all values in corresponding layer, we **count the number of `0`, `1` and `2`** of each layer. From **layer with fewest number of `0`**, we multiply the number of `1` by number of `2`.
+
+Result for my input data is: `1905`
 
 
 ## Part 2
@@ -70,4 +74,11 @@ So, the final image looks like this:
 **What message is produced after decoding your image?**
 
 ### Solution
-My solution is: `ACKPZ`
+In this part, we have to get the secret message from image. We use the layer structure to decode the received image. We start at layer 0 and we have to evaluate each pixel:
+* If pixel value is `0`: The pixel color for decoded image is **black** (#).
+* If pixel value is `1`: The pixel color for decoded image is **white** ( ).
+* If pixel value is `2`: The pixel color for decoded image is **transparent**. We have to **evaluate the pixel of next layer at same position**.
+
+You can see the secret word by **print the decoded image in console**.
+
+Result for my input data is: `ACKPZ`
