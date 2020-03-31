@@ -193,7 +193,11 @@ Sum of total energy: 290 + 608 + 574 + 468 = 1940
 **What is the total energy in the system** after simulating the moons given in your scan for `1000` steps?
 
 ### Solution
-My solution is: `10198`
+To solve this problem, we need to use a **loop**. At each step, first we **update current velocities** based on rules for velocity (velocity change depending of the moons positions). After update velocities, **move all moons** to their new position.
+
+After all steps we get **final position and velocity of each moon**. With this information we calculate the solution by **applying the specified formula**.
+
+Result for my input data is: `10198`
 
 
 ## Part 2
@@ -244,4 +248,13 @@ This set of initial positions takes `4686774924` steps before it repeats a previ
 **How many steps does it take** to reach the first state that exactly matches a previous state?
 
 ### Solution
-My solution is: `271442326847376`
+If we use the source of part 1 without any modification, it **takes a very long time** to get the solution (hours and hours). For this reason we need **another strategy** to solve this part.
+
+In this case, we compute number of steps to reach the initial position and velocity in each dimension. In te example 2, we get the following number of steps:
+* **X**: `2028` steps
+* **Y**: `5898` steps
+* **Z**: `4702` steps
+
+The final solution is the **least common multiple (lcm)** of these 3 values, because this value is number of steps in which moons are at initial position and velocity. First we get lcm of **Y** and **Z** (`13866198`), and then this value with **X** (`4686774924`).
+
+Result for my input data is: `271442326847376`
