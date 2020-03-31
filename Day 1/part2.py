@@ -3,9 +3,9 @@ import numpy as np
 
 # Recursive calculate total mass for a module
 def compute_fuel(mass):
-    fuel=int(np.floor(mass/3)-2)
+    fuel = int(np.floor(mass/3)-2)
 
-    if(fuel <= 0):
+    if fuel <= 0:
         return 0
 
     return fuel+compute_fuel(fuel)
@@ -22,10 +22,10 @@ print(compute_fuel(100756))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-modules=[int(mod[:-1]) for mod in file.readlines()]
+modules = [int(mod[:-1]) for mod in file.readlines()]
 
 # Calculate the solution
-solutions=[]
+solutions = []
 for mod in modules:
     solutions.append(compute_fuel(mod))
 
