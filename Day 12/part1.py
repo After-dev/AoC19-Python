@@ -7,7 +7,7 @@ def print_state(moons_pos, moons_velocities, steps):
 
 def motion_simulation(moons_pos, steps):
     # Init moon velocities
-    moons_velocities = [[0,0,0] for _ in moons_pos]
+    moons_velocities = [[0, 0, 0] for _ in moons_pos]
 
     # Print position and velocity of each moon at init
     #print_state(moons_pos, moons_velocities, '0')

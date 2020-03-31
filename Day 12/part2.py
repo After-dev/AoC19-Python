@@ -19,7 +19,7 @@ def motion_simulation(init_pos_moons, init_vel_moons, steps):
     # Simulate each step
     for step in range(steps):
         # Update velocities (compare every pair of moons)
-        for i,moon1 in enumerate(moons_pos,start=0):
+        for i,moon1 in enumerate(moons_pos, start=0):
             for moon2 in moons_pos:
                 if moon1 != moon2:
                     for dim in range(3):
@@ -40,7 +40,7 @@ def motion_simulation(init_pos_moons, init_vel_moons, steps):
 
 
 def steps_to_cycle(init_pos_moons, init_vel_moons):
-    steps = [0,0,0]
+    steps = [0, 0, 0]
 
     # Find steps needed to reach initial position in each dimension
     for dim in range(3):
@@ -56,10 +56,6 @@ def steps_to_cycle(init_pos_moons, init_vel_moons):
 
             if [moon[dim] for moon in current_pos_moons] == dim_init_pos and [moon[dim] for moon in current_vel_moons] == [0,0,0,0]:
                 break
-
-    print(str(steps[0])+" "+str(steps[1])+" "+str(steps[2]))
-    print(np.lcm(steps[1], steps[2]))
-    print(np.lcm(steps[0], np.lcm(steps[1], steps[2])))
 
     # Calculate least common multiple to obtain total steps
     return np.lcm(steps[0], np.lcm(steps[1], steps[2]))
