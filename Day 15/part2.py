@@ -1,207 +1,212 @@
 import numpy as np
 
 
-def intcode_program(state):
-    output=[]
+def intcode_program(state, max_size, n_read):
+    output = []
 
     # Get state
-    intcode_aux=state[0][:]
-    inputs=state[1]
-    pointer=state[2]
-    relative_base=state[3]
-    max_size=state[4]
-    n_read=state[5]
+    intcode_aux = state[0][:]
+    inputs = state[1]
+    pointer = state[2]
+    relative_base = state[3]
 
     # Resize array (get more memory)
-    intcode_aux=np.resize(intcode_aux,(max_size))
+    intcode_aux = np.resize(intcode_aux, max_size)
 
     # Browse array by steps of 4
     while pointer < len(intcode):
         # Get opcode and mode of parameters
-        opcode_instruction=str(intcode_aux[pointer])
-        while(len(opcode_instruction) < 5):
+        opcode_instruction = str(intcode_aux[pointer])
+        while len(opcode_instruction) < 5:
             opcode_instruction = '0'+opcode_instruction
 
-        opcode=int(opcode_instruction[-2:])
-        mode_params=[
+        opcode = int(opcode_instruction[-2:])
+        mode_params = [
             int(opcode_instruction[-3]),
             int(opcode_instruction[-4]),
             int(opcode_instruction[-5])
         ]
 
         # Get index of each parameter
-        indexes=[-1,-1,-1]
+        indexes = [-1, -1, -1]
         for i in range(len(indexes)):
-            pos=pointer+1+i
-            if(pos < len(intcode_aux)):
-                if(mode_params[i] == 0):
-                    indexes[i]=intcode_aux[pos]
-                elif(mode_params[i] == 1):
-                    indexes[i]=pos
-                elif(mode_params[i] == 2):
-                    indexes[i]=relative_base+intcode_aux[pos]
+            pos = pointer+1+i
+            if pos < len(intcode_aux):
+                if mode_params[i] == 0:
+                    indexes[i] = intcode_aux[pos]
+                elif mode_params[i] == 1:
+                    indexes[i] = pos
+                elif mode_params[i] == 2:
+                    indexes[i] = relative_base+intcode_aux[pos]
 
         # Apply opcode operation
         # STOP
-        if(opcode == 99):
+        if opcode == 99:
             break
 
         # ADDITION
-        elif(opcode == 1):
-            op1=intcode_aux[indexes[0]]
-            op2=intcode_aux[indexes[1]]
-            intcode_aux[indexes[2]]=op1+op2
-            pointer+=4
+        elif opcode == 1:
+            op1 = intcode_aux[indexes[0]]
+            op2 = intcode_aux[indexes[1]]
+            intcode_aux[indexes[2]] = op1+op2
+            pointer += 4
 
         # MULTIPLICATION
-        elif(opcode == 2):
-            op1=intcode_aux[indexes[0]]
-            op2=intcode_aux[indexes[1]]
-            intcode_aux[indexes[2]]=op1*op2
-            pointer+=4
+        elif opcode == 2:
+            op1 = intcode_aux[indexes[0]]
+            op2 = intcode_aux[indexes[1]]
+            intcode_aux[indexes[2]] = op1*op2
+            pointer += 4
 
         # INPUT
-        elif(opcode == 3):
-            intcode_aux[indexes[0]]=inputs.pop(0)
-            pointer+=2
+        elif opcode == 3:
+            intcode_aux[indexes[0]] = inputs.pop(0)
+            pointer += 2
 
         # OUTPUT
-        elif(opcode == 4):
+        elif opcode == 4:
             #print('Output: '+intcode_aux[indexes[0]].__str__())
             output.append(intcode_aux[indexes[0]])
-            pointer+=2
-            if(len(output) == n_read):
+            pointer += 2
+            if len(output) == n_read:
                 break
 
         # JUMP-IF-TRUE
-        elif(opcode == 5):
-            if(intcode_aux[indexes[0]] != 0):
-                pointer=intcode_aux[indexes[1]]
+        elif opcode == 5:
+            if intcode_aux[indexes[0]] != 0:
+                pointer = intcode_aux[indexes[1]]
             else:
-                pointer+=3
+                pointer += 3
 
         # JUMP-IF-FALSE
-        elif(opcode == 6):
-            if(intcode_aux[indexes[0]] == 0):
-                pointer=intcode_aux[indexes[1]]
+        elif opcode == 6:
+            if intcode_aux[indexes[0]] == 0:
+                pointer = intcode_aux[indexes[1]]
             else:
-                pointer+=3
+                pointer += 3
 
         # LESS-THAN
-        elif(opcode == 7):
-            if(intcode_aux[indexes[0]] < intcode_aux[indexes[1]]):
-                intcode_aux[indexes[2]]=1
+        elif opcode == 7:
+            if intcode_aux[indexes[0]] < intcode_aux[indexes[1]]:
+                intcode_aux[indexes[2]] = 1
             else:
-                intcode_aux[indexes[2]]=0
-            pointer+=4
+                intcode_aux[indexes[2]] = 0
+            pointer += 4
 
         # EQUAL-TO
-        elif(opcode == 8):
-            if(intcode_aux[indexes[0]] == intcode_aux[indexes[1]]):
-                intcode_aux[indexes[2]]=1
+        elif opcode == 8:
+            if intcode_aux[indexes[0]] == intcode_aux[indexes[1]]:
+                intcode_aux[indexes[2]] = 1
             else:
-                intcode_aux[indexes[2]]=0
-            pointer+=4
+                intcode_aux[indexes[2]] = 0
+            pointer += 4
 
         # ADJUST RELATIVE BASE
-        elif(opcode == 9):
+        elif opcode == 9:
             relative_base += intcode_aux[indexes[0]]
-            pointer+=2
+            pointer += 2
 
-    return output,intcode_aux,pointer,relative_base
+    return [output, intcode_aux, pointer, relative_base]
+
 
 def get_full_map(intcode):
-    pos=(0,0)
-    goal=(-1,-1)
-    fields={pos:1}
-    direction=-1
-    movements=[(0,1),(0,-1),(-1,0),(1,0)]
-    state=[intcode,[],0,0,2000,1]
-    path_from_start=[pos]
+    pos = (0, 0)
+    goal = (-1, -1)
+    fields = {pos: 1}
+    direction = -1
+    movements = [
+        (0, 1),
+        (0, -1),
+        (-1, 0),
+        (1, 0)
+    ]
+    state = [intcode, [], 0, 0]
+    path_from_start = [pos]
 
-    while(True):
-        back=False
+    while True:
+        back = False
 
         # Get current pos
-        pos=path_from_start[-1]
+        pos = path_from_start[-1]
 
         # Get new direction when hit wall
-        if(direction == -1):
+        if direction == -1:
             # Search unvisited direction
             for i in range(4):
-                new_pos=(pos[0]+movements[i][0],pos[1]+movements[i][1])
-                if(new_pos not in fields):
-                    direction=i
+                new_pos = (pos[0]+movements[i][0], pos[1]+movements[i][1])
+                if new_pos not in fields:
+                    direction = i
                     break
 
             # If there is no available direction, turn back
-            if(direction == -1):
+            if direction == -1:
                 # If root has not got available direction, break
-                if(len(path_from_start) == 1):
+                if len(path_from_start) == 1:
                     break
 
                 back = True
                 path_from_start.pop(-1)
-                prev_pos=path_from_start[-1]
-                direction=movements.index((prev_pos[0]-pos[0],prev_pos[1]-pos[1]))
+                prev_pos = path_from_start[-1]
+                direction = movements.index((prev_pos[0]-pos[0], prev_pos[1]-pos[1]))
 
         # Calculate new pos
-        new_pos=(pos[0]+movements[direction][0],pos[1]+movements[direction][1])
+        new_pos = (pos[0]+movements[direction][0], pos[1]+movements[direction][1])
 
         # Get repair droid status
         state[1].append(direction+1)
-        [output,state[0],state[2],state[3]]=intcode_program(state)
-        status=output[0]
+        [output, state[0], state[2], state[3]] = intcode_program(state, 2000, 1)
+        status = output[0]
 
         # Analyze status
-        fields[new_pos]=status
-        if(back):
-            direction=-1
+        fields[new_pos] = status
+        if back:
+            direction = -1
         else:
-            if(status == 0):
-                direction=-1
+            if status == 0:
+                direction = -1
             else:
-                if(status == 2):
+                if status == 2:
                     #print('Goal reached')
-                    goal=pos
+                    goal = pos
 
                 path_from_start.append(new_pos)
 
-    return [fields,goal]
+    return [fields, goal]
 
-def oxygen(full_map,goal):
-    minutes=0
-    queue=[[goal,minutes]]
 
-    while(len(queue) > 0):
+def oxygen(full_map, goal):
+    minutes = 0
+    queue = [[goal, minutes]]
+
+    while len(queue) > 0:
         # Get next point
-        [point,minutes] = queue.pop(0)
+        [point, minutes] = queue.pop(0)
 
         # Gen adjacent points
-        p1=(point[0]-1,point[1]+0)
-        p2=(point[0]+1,point[1]+0)
-        p3=(point[0]+0,point[1]+1)
-        p4=(point[0]+0,point[1]-1)
+        p1 = (point[0]-1, point[1]+0)
+        p2 = (point[0]+1, point[1]+0)
+        p3 = (point[0]+0, point[1]+1)
+        p4 = (point[0]+0, point[1]-1)
 
         # Get status of each adjacent point
-        r1=full_map[p1]
-        r2=full_map[p2]
-        r3=full_map[p3]
-        r4=full_map[p4]
+        r1 = full_map[p1]
+        r2 = full_map[p2]
+        r3 = full_map[p3]
+        r4 = full_map[p4]
 
         # Add to queue points diferent from wall (0)
-        if(r1 != 0):
-            full_map[p1]=0
-            queue.append([p1,minutes+1])
-        if(r2 != 0):
-            full_map[p2]=0
-            queue.append([p2,minutes+1])
-        if(r3 != 0):
-            full_map[p3]=0
-            queue.append([p3,minutes+1])
-        if(r4 != 0):
-            full_map[p4]=0
-            queue.append([p4,minutes+1])
+        if r1 != 0:
+            full_map[p1] = 0
+            queue.append([p1, minutes+1])
+        if r2 != 0:
+            full_map[p2] = 0
+            queue.append([p2, minutes+1])
+        if r3 != 0:
+            full_map[p3] = 0
+            queue.append([p3, minutes+1])
+        if r4 != 0:
+            full_map[p4] = 0
+            queue.append([p4, minutes+1])
 
     return minutes+1
 
@@ -215,11 +220,11 @@ print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
 line = file.readlines()[0][:-1].split(',')
-intcode=[int(i) for i in line]
+intcode = [int(i) for i in line]
 
 # Calculate the solution
-[full_map,goal]=get_full_map(intcode)
-solution=oxygen(full_map,goal)
+[full_map, goal] = get_full_map(intcode)
+solution = oxygen(full_map, goal)
 
 # Print the solution
 print(solution)
