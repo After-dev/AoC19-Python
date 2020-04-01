@@ -139,7 +139,7 @@ for line in lines:
     reactions[output_chemical] = [int(output_units), inputs]
 
 # Calculate the solution
-solution=minimum_ORE(reactions)
+solution = minimum_ORE(reactions)
 
 # Print the solution
 print(solution)
