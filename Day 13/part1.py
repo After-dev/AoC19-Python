@@ -142,8 +142,7 @@ def arcade_game(intcode):
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode = [int(i) for i in line]
+intcode = [int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 solution = len(arcade_game(intcode)[2])

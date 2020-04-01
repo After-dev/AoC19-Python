@@ -58,6 +58,7 @@ def minimum_ORE(reactions, total_ORE, freq_FUEL, unused_chemicals={}):
 
     return [total_ORE, unused_chemicals, cont]
 
+
 def max_FUEL(reactions, total_ORE):
     # Speed of calculate
     freq_FUEL = 1000
