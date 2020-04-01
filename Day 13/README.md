@@ -45,7 +45,7 @@ Beat the game by breaking all the blocks. **What is your score after the last bl
 To solve this part, let's see a figure with elements of this problem:
 
 <div align="center">
-    <img src="./images/Fig-1.png" width=200>
+    <img src="./images/Fig-1.png" width=400>
 </div>
 
 In this figure, we have a **joystick to move** the horizontal paddle (`red`). The objective is hit the ball (`blue`) to reject the ball and destroy another block tile (`green`). The input for joystick **starts with `0`** and this **value can change** during the execution. **Each cycle of the loop** we give corresponding input value to intcode_program.
