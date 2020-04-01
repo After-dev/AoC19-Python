@@ -126,7 +126,7 @@ def arcade_game(intcode):
     while True:
         # Get position and tile
         state[1] = [input]
-        [output,state[0], state[2], state[3]] = intcode_program(state, 5000, 3)
+        [output, state[0], state[2], state[3]] = intcode_program(state, 5000, 3)
         if len(output) != 3:
             break
 
