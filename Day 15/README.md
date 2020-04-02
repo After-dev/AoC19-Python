@@ -85,7 +85,9 @@ Now, because of the reply of `2`, you know you've found the **oxygen system**! I
 **What is the fewest number of movement commands** required to move the repair droid from its starting position to the location of the oxygen system?
 
 ### Solution
-My solution is: `204`
+In this problem, we have to use intcode_program. We must **move a robot until oxygen system**. To do this, we **start with no direction to move**, so first we calculate a direction. When robot has a direction, **this value is given as input to intcode_program and it returns an output value**. If this output is equal to `2`, robot **stop his movement and return solution**. Otherwise, if the output is not equal to `0`, we **save new pos in the `path` and continue the movement in the same direction** (until the output value is `0` or `2`). If the output value is 0, robot **goes to previous position and try to find a new unvisited direction** from this. If no direction is available, go back again (until new unvisited direction is available).
+
+Result for my input data is: `204`
 
 
 ## Part 2
@@ -146,4 +148,8 @@ So, in this example, all locations contain oxygen after `4` minutes.
 Use the repair droid to get a complete map of the area. **How many minutes will it take to fill with oxygen?**
 
 ### Solution
-My solution is: `340`
+To solve this problem, we use a **queue** that store a **position and current minute**. Queue **start with goal position**. In a loop, we **get next position** in the queue, **generate adjacent positions** and **get their statuses** (it is wall or not). If any these positions is not a wall, we **add the position to the queue (with `minutes+1`), mark the position as wall (not to consider it again) and repeat loop**, until queue is empty.
+
+Final result is **last `minutes value+1`**.
+
+Result for my input data is: `340`

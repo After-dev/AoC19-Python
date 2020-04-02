@@ -154,17 +154,14 @@ def remote_control_program(intcode):
 
         # Analyze status
         fields[new_pos] = status
-        if back:
+        if back or status == 0:
             direction = -1
         else:
-            if status == 0:
-                direction = -1
-            else:
-                if status == 2:
-                    #print('Goal reached')
-                    break
+            if status == 2:
+                #print('Goal reached')
+                break
 
-                path_from_start.append(new_pos)
+            path_from_start.append(new_pos)
 
     return len(path_from_start)
 
@@ -177,8 +174,7 @@ def remote_control_program(intcode):
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode = [int(i) for i in line]
+intcode = [int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 solution = remote_control_program(intcode)

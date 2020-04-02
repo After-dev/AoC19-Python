@@ -176,37 +176,30 @@ def get_full_map(intcode):
 
 def oxygen(full_map, goal):
     minutes = 0
-    queue = [[goal, minutes]]
+    directions = {
+        "north": (0, -1),
+        "south": (0, 1),
+        "west": (-1, 0),
+        "east": (1, 0)
+    }
 
+    queue = [[goal, minutes]]
     while len(queue) > 0:
         # Get next point
         [point, minutes] = queue.pop(0)
 
-        # Gen adjacent points
-        p1 = (point[0]-1, point[1]+0)
-        p2 = (point[0]+1, point[1]+0)
-        p3 = (point[0]+0, point[1]+1)
-        p4 = (point[0]+0, point[1]-1)
+        # For each direction
+        for d in directions:
+            # Gen adjacent point
+            p = (point[0]+directions[d][0], point[1]+directions[d][1])
 
-        # Get status of each adjacent point
-        r1 = full_map[p1]
-        r2 = full_map[p2]
-        r3 = full_map[p3]
-        r4 = full_map[p4]
+            # Get status of each adjacent point
+            s = full_map[p]
 
-        # Add to queue points diferent from wall (0)
-        if r1 != 0:
-            full_map[p1] = 0
-            queue.append([p1, minutes+1])
-        if r2 != 0:
-            full_map[p2] = 0
-            queue.append([p2, minutes+1])
-        if r3 != 0:
-            full_map[p3] = 0
-            queue.append([p3, minutes+1])
-        if r4 != 0:
-            full_map[p4] = 0
-            queue.append([p4, minutes+1])
+            # Add to queue points diferent from wall (0)
+            if s != 0:
+                full_map[p] = 0
+                queue.append([p, minutes+1])
 
     return minutes+1
 
@@ -219,8 +212,7 @@ def oxygen(full_map, goal):
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode = [int(i) for i in line]
+intcode = [int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 [full_map, goal] = get_full_map(intcode)
