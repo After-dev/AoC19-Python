@@ -116,7 +116,6 @@ def get_full_map(intcode):
 
     # Get all ASCII codes
     [ASCII_codes, _, _, _] = intcode_program(state, 5000, -1)
-    #print(ASCII_codes)
 
     # Populate map
     for code in ASCII_codes:
@@ -317,8 +316,7 @@ print(get_functions(full_routine))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode = [int(i) for i in line]
+intcode = [int(i) for i in file.readlines()[0][:-1].split(',')]
 
 # Calculate the solution
 full_map = get_full_map(intcode)
@@ -332,8 +330,7 @@ for func in functions:
     inputs += [ord(i) for i in func]+[10]
 
 file = open('./input.data', 'r')
-line = file.readlines()[0][:-1].split(',')
-intcode = [int(i) for i in line]
+intcode = [int(i) for i in file.readlines()[0][:-1].split(',')]
 intcode[0] = 2
 [solutions, _, _, _] = intcode_program([intcode, inputs+[ord('y')]+[10], 0, 0], 10000, -1)
 solution = solutions[-1]

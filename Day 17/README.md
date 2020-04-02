@@ -50,7 +50,9 @@ To calibrate the cameras, you need the **sum of the alignment parameters**. In t
 Run your ASCII program. **What is the sum of the alignment parameters** for the scaffold intersections?
 
 ### Solution
-My solution is: `6680`
+To solve this part, we need to use the intcode_program. We run intcode_program with out input data and this returns **entire map values**. From this, we **mark with code `12` all intersections** and the result is the **sum of their `x*y` values**.
+
+Result for my input data is: `6680`
 
 
 ## Part 2
@@ -134,4 +136,4 @@ As the vacuum robot finds other robots and notifies them of the impending solar 
 After visiting every part of the scaffold at least once, **how much dust does the vacuum robot report it has collected?**
 
 ### Solution
-My solution is: `1103905`
+Result for my input data is: `1103905`
