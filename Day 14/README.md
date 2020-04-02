@@ -97,7 +97,256 @@ Here are some larger examples:
 Given the list of reactions in your puzzle input, **what is the minimum amount of `ORE` required to produce exactly 1 `FUEL`?**
 
 ### Solution
-My solution is: `483766`
+To solve this problem, we get needed chemical **from `FUEL` until `ORE`**. I use one dict to store **unused chemicals** and one list that acts as **queue**. The dict starts **empty** (we do not have any unused chemical) and list starts with `[Fuel, 1]` (we calculate from `FUEL` to `ORE`). We use a loop with the following phases:
+1) Get next chemical to generate from list and required units.
+2) Try to reduce required units with unused chemicals in dict (if there are unused units for current chemical).
+3) After the reduction, if required units are `0`, repeat loop from 1. Otherwise, go 4.
+4) Get reaction for current chemical (input chemicals and required units for each one, and generated units).
+5) Compute how many times it is necessary to apply the rule (`[required units]/[generated units]`). For example, if we need 5 units and the rule generates 3, it is necessary to apply the rule twice.
+6) Store unused units in the dict of unused chemicals.
+7) For each input chemical needed to generate current chemical, we add to queue each one with its corresponding required units. If input chemical is `ORE`, we add the number of required units to solution instead of add to queue.
+
+To understand this method, let's solve example 3 (step by step):
+```
+157 ORE => 5 NZVS
+165 ORE => 6 DCFZ
+44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL
+12 HKGWZ, 1 GPVTF, 8 PSHF => 9 QDVJ
+179 ORE => 7 PSHF
+177 ORE => 5 HKGWZ
+7 DCFZ, 7 PSHF => 2 XJWVT
+165 ORE => 2 GPVTF
+3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT
+```
+
+* Cycle 1:
+```
+sol = 0
+dict = {}
+queue = [['FUEL', 1]]
+```
+  1) Get next chemical and required units: `['FUEL', 1]`
+  2) Try to reduce required units: dict is empty, so we cannot reduce it
+  3) Required units (1) is not 0, so we continue cycle.
+  4) Get reaction for `'FUEL'` (inputs and required units): `[1,[44 'XJWVT', 5 'KHKGT', 1 'QDVJ', 29 'NZVS', 9 'GPVTF', 48 'HKGWZ']]`
+  5) Calculate times to apply the rule: `1/1 = 1`
+  6) Store unused units: `1-1 = 0` (nothing is stored)
+  7) Add input chemicals to queue: None is `'ORE'` and rule is applied once, so we store `['XJWVT',44]`, `['KHKGT',5]`, `['QDVJ',1]`, `['NZVS',29]`, `['GPVTF',9]`, `['HKGWZ',48]`.
+
+* Cycle 2:
+```
+sol = 0
+dict = {}
+queue = [['XJWVT',44], ['KHKGT',5], ['QDVJ',1], ['NZVS',29], ['GPVTF',9], ['HKGWZ',48]]
+```
+  1) Get next chemical and required units: `['XJWVT',44]`
+  2) Try to reduce required units: dict is empty, so we cannot reduce it
+  3) Required units (44) is not 0, so we continue cycle.
+  4) Get reaction for `'XJWVT'` (inputs and required units): `[2,[7 DCFZ, 7 PSHF]]`
+  5) Calculate times to apply the rule: `44/2 = 22`
+  6) Store unused units: `(22*2)-44 = 0` (nothing is stored)
+  7) Add input chemicals to queue: None is `'ORE'` and rule is applied once, so we store `['DCFZ',(7*22=154)]`, `['PSHF',(7*22=154)]`.
+
+* Cycle 3:
+```
+sol = 0
+dict = {}
+queue = [['KHKGT',5], ['QDVJ',1], ['NZVS',29], ['GPVTF',9], ['HKGWZ',48], ['DCFZ',154], ['PSHF',154]]
+```
+  1) Get next chemical and required units: `['KHKGT', 5]`
+  2) Try to reduce required units: dict is empty, so we cannot reduce it
+  3) Required units (5) is not 0, so we continue cycle.
+  4) Get reaction for `'KHKGT'` (inputs and required units): `[8,[3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF]]`
+  5) Calculate times to apply the rule: `5/8 = 0.625 => 1`
+  6) Store unused units: `8-5 = 3` (`3 'KHKGT'` is stored)
+  7) Add input chemicals to queue: None is `'ORE'` and rule is applied once, so we store `['DCFZ',3]`, `['NZVS',7]`, `['HKGWZ',5]`, `['PSHF',10]`.
+
+* Cycle 4:
+```
+sol = 0
+dict = {"KHKGT": 3}
+queue = [['QDVJ',1], ['NZVS',29], ['GPVTF',9], ['HKGWZ',48], ['DCFZ',154], ['PSHF',154], ['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10]]
+```
+  1) Get next chemical and required units: `['QDVJ',1]`
+  2) Try to reduce required units: there are no `'QDVJ'` in dict, so we cannot reduce it
+  3) Required units (1) is not 0, so we continue cycle.
+  4) Get reaction for `'QDVJ'` (inputs and required units): `[9,[12 HKGWZ, 1 GPVTF, 8 PSHF]]`
+  5) Calculate times to apply the rule: `1/9 = 0.1 => 1`
+  6) Store unused units: `9-1 = 8` (`8 'QDVJ'` is stored)
+  7) Add input chemicals to queue: None is `'ORE'` and rule is applied once, so we store `['HKGWZ',12]`, `['GPVTF',1]`, `['PSHF',8]`.
+
+* Cycle 5:
+```
+sol = 0
+dict = {"KHKGT": 3, "QDVJ": 8}
+queue = [['NZVS',29], ['GPVTF',9], ['HKGWZ',48], ['DCFZ',154], ['PSHF',154], ['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['NZVS',29]`
+  2) Try to reduce required units: there are no `'NZVS'` in dict, so we cannot reduce it
+  3) Required units (29) is not 0, so we continue cycle.
+  4) Get reaction for `'NZVS'` (inputs and required units): `[5,[157 ORE]]`
+  5) Calculate times to apply the rule: `29/5 = 5.8 => 6`
+  6) Store unused units: `(5*6)-29 = 1` (`1 'NZVS'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `157*6 = 942` to sol.
+
+* Cycle 6:
+```
+sol = 942
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 1}
+queue = [['GPVTF',9], ['HKGWZ',48], ['DCFZ',154], ['PSHF',154], ['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['GPVTF',9]`
+  2) Try to reduce required units: there are no `'GPVTF'` in dict, so we cannot reduce it
+  3) Required units (9) is not 0, so we continue cycle.
+  4) Get reaction for `'GPVTF'` (inputs and required units): `[2,[165 ORE]]`
+  5) Calculate times to apply the rule: `9/2 = 4.5 => 5`
+  6) Store unused units: `(2*5)-9 = 1` (`1 'GPVTF'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `165*5 = 825` to sol.
+
+* Cycle 7:
+```
+sol = 1767
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 1, "GPVTF": 1}
+queue = [['HKGWZ',48], ['DCFZ',154], ['PSHF',154], ['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['HKGWZ',48]`
+  2) Try to reduce required units: there are no `'HKGWZ'` in dict, so we cannot reduce it
+  3) Required units (48) is not 0, so we continue cycle.
+  4) Get reaction for `'HKGWZ'` (inputs and required units): `[5,[177 ORE]]`
+  5) Calculate times to apply the rule: `48/5 = 9.6 => 10`
+  6) Store unused units: `(5*10)-48 = 2` (`2 'HKGWZ'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `177*10 = 1770` to sol.
+
+* Cycle 8:
+```
+sol = 3537
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 1, "GPVTF": 1, "HKGWZ": 2}
+queue = [['DCFZ',154], ['PSHF',154], ['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['DCFZ',154]`
+  2) Try to reduce required units: there are no `'DCFZ'` in dict, so we cannot reduce it
+  3) Required units (154) is not 0, so we continue cycle.
+  4) Get reaction for `'DCFZ'` (inputs and required units): `[6,[165 ORE]]`
+  5) Calculate times to apply the rule: `154/6 = 25.6 => 26`
+  6) Store unused units: `(6*26)-154 = 2` (`2 'DCFZ'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `165*26 = 4290` to sol.
+
+* Cycle 9:
+```
+sol = 7827
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 1, "GPVTF": 1, "HKGWZ": 2, "DCFZ": 2}
+queue = [['PSHF',154], ['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['PSHF',154]`
+  2) Try to reduce required units: there are no `'PSHF'` in dict, so we cannot reduce it
+  3) Required units (154) is not 0, so we continue cycle.
+  4) Get reaction for `'PSHF'` (inputs and required units): `[7,[179 ORE]]`
+  5) Calculate times to apply the rule: `154/7 = 22`
+  6) Store unused units: `(7*22)-154 = 0` (nothing is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `179*22 = 3938` to sol.
+
+* Cycle 10:
+```
+sol = 11765
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 1, "GPVTF": 1, "HKGWZ": 2, "DCFZ": 2}
+queue = [['DCFZ',3], ['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['DCFZ',3]`
+  2) Try to reduce required units: there are `'DCFZ'` in dict, so we reduce it to 3-2 = 1
+  3) Required units (1) is not 0, so we continue cycle.
+  4) Get reaction for `'DCFZ'` (inputs and required units): `[6,[165 ORE]]`
+  5) Calculate times to apply the rule: `1/6 = 0.16 => 1`
+  6) Store unused units: `(6*1)-1 = 5` (`5 'DCFZ'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `165*1 = 165` to sol.
+
+* Cycle 11:
+```
+sol = 11930
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 1, "GPVTF": 1, "HKGWZ": 2, "DCFZ": 5}
+queue = [['NZVS',7], ['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['NZVS',7]`
+  2) Try to reduce required units: there are `'NZVS'` in dict, so we reduce it to 7-1 = 6
+  3) Required units (6) is not 0, so we continue cycle.
+  4) Get reaction for `'NZVS'` (inputs and required units): `[5,[157 ORE]]`
+  5) Calculate times to apply the rule: `6/5 = 1.2 => 2`
+  6) Store unused units: `(5*2)-6 = 4` (`4 'NZVS'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `157*2 = 314` to sol.
+
+* Cycle 12:
+```
+sol = 12244
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 4, "GPVTF": 1, "HKGWZ": 2, "DCFZ": 5}
+queue = [['HKGWZ',5], ['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['HKGWZ',5]`
+  2) Try to reduce required units: there are `'HKGWZ'` in dict, so we reduce it to 5-2 = 3
+  3) Required units (3) is not 0, so we continue cycle.
+  4) Get reaction for `'HKGWZ'` (inputs and required units): `[5,[177 ORE]]`
+  5) Calculate times to apply the rule: `3/5 = 0.6 => 1`
+  6) Store unused units: `(5*1)-3 = 2` (`2 'HKGWZ'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `177*1 = 177` to sol.
+
+* Cycle 13:
+```
+sol = 12421
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 4, "GPVTF": 1, "HKGWZ": 2, "DCFZ": 5}
+queue = [['PSHF',10], ['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['PSHF',10]`
+  2) Try to reduce required units: there are no `'PSHF'` in dict, so we cannot reduce it
+  3) Required units (10) is not 0, so we continue cycle.
+  4) Get reaction for `'PSHF'` (inputs and required units): `[7,[179 ORE]]`
+  5) Calculate times to apply the rule: `10/7 = 1.43 => 2`
+  6) Store unused units: `(7*2)-10 = 4` (`4 'PSHF'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `179*2 = 358` to sol.
+
+* Cycle 14:
+```
+sol = 12779
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 4, "GPVTF": 1, "HKGWZ": 2, "DCFZ": 5, "PSHF": 4}
+queue = [['HKGWZ',12], ['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['HKGWZ',12]`
+  2) Try to reduce required units: there are `'HKGWZ'` in dict, so we reduce it to 12-2 = 10
+  3) Required units (10) is not 0, so we continue cycle.
+  4) Get reaction for `'HKGWZ'` (inputs and required units): `[5,[177 ORE]]`
+  5) Calculate times to apply the rule: `10/5 = 2`
+  6) Store unused units: `(5*2)-10 = 0` (nothing is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `177*2 = 354` to sol.
+
+* Cycle 15:
+```
+sol = 13133
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 4, "GPVTF": 1, "DCFZ": 5, "PSHF": 4}
+queue = [['GPVTF',1], ['PSHF',8]]
+```
+  1) Get next chemical and required units: `['GPVTF',1]`
+  2) Try to reduce required units: there are `'GPVTF'` in dict, so we reduce it to 1-1 = 0
+  3) Required units (0) is 0, so stop this cycle cycle.
+
+* Cycle 16:
+```
+sol = 13133
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 4, "DCFZ": 5, "PSHF": 4}
+queue = [['PSHF',8]]
+```
+  1) Get next chemical and required units: `['PSHF',8]`
+  2) Try to reduce required units: there are `'PSHF'` in dict, so we reduce it to 8-4 = 4
+  3) Required units (4) is not 0, so we continue cycle.
+  4) Get reaction for `'PSHF'` (inputs and required units): `[7,[179 ORE]]`
+  5) Calculate times to apply the rule: `4/7 = 0.57 => 1`
+  6) Store unused units: `(7*1)-4 = 0` (`3 'PSHF'` is stored)
+  7) Add input chemicals to queue: Input is `'ORE'`, so we add `179*1 = 179` to sol.
+
+* Final state:
+```
+sol = 13312
+dict = {"KHKGT": 3, "QDVJ": 8, "NZVS": 4, "DCFZ": 5, "PSHF": 3}
+queue = []
+```
+
+Result for my input data is: `483766`
 
 
 ## Part 2
@@ -114,4 +363,10 @@ After collecting `ORE` for a while, you check your cargo hold: **1 trillion** (*
 Given 1 trillion `ORE`, **what is the maximum amount of `FUEL` you can produce?**
 
 ### Solution
-My solution is: `3061522`
+In part 1 we calculated required `ORE` to generate 1 `FUEL`. In part 2 we have to **calculate how many `FUEL`s can be generated with 1 trillion of `ORE`**.
+
+To solve this part, we can use previous code. We can do a loop to generate `FUEL` one by one, but this is **too computationally expensive**. For this reason we need another strategy. In my case, I generate **blocks of `FUEL` of a specific size** (in my case `1000`). We generate `FUEL`s in blocks of `1000` units and, **when a block cost more `ORE` than we have, block size is reduced** to `1`.
+
+**You must have in account that unused chemicals from one block are used in the next execution.**
+
+Result for my input data is: `3061522`

@@ -30,7 +30,9 @@ def minimum_ORE(reactions):
             # Store unused chemicals
             unused_units = reaction_output*p-units_needed
             if unused_units > 0:
-                unused_chemicals[chemical] = unused_units
+                if chemical not in unused_chemicals:
+                    unused_chemicals[chemical] = 0
+                unused_chemicals[chemical] += unused_units
 
             # For each input
             for input in reaction_inputs.split(','):
