@@ -1,9 +1,4 @@
-import numpy as np
-
-
 def FFT(input, phases):
-    base_pattern = [0, 1, 0, -1]
-
     # Use message from offset. This data is from the end, soo base_pattern is always 1
     offset = int(input[:7])
     input = [int(i) for i in input[offset:]]

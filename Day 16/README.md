@@ -76,7 +76,9 @@ Here are the first eight digits of the final output list after 100 phases for so
 After **100** phases of FFT, **what are the first eight digits in the final output list?**
 
 ### Solution
-My solution is: `53296082`
+This part is solved by **applying the formula**. Each new digit is computed using all digits and a base pattern (`[0, 1, 0, -1]`).
+
+Result for my input data is: `53296082`
 
 
 ## Part 2
@@ -97,4 +99,16 @@ Here is the eight-digit message in the final output list after 100 phases. The m
 After repeating your input signal 10000 times and running 100 phases of FFT, **what is the eight-digit message embedded in the final output list?**
 
 ### Solution
-My solution is: `43310035`
+In this part, **total input is my input repeated 1000 times**, one after another. Now, we use an **offset** (first 7 digits of total input). This means that we **only need to compute solution from offset digit to last digit**. Offset is a high value, so we can compute new digit values as sum of previous digit with current digit, from last to offset digit. For example: `12345678`
+* **Digit 7**: `8`
+* **Digit 6**: `8+7 = 15 => 5`
+* **Digit 5**: `5+6 = 11 => 1`
+* **Digit 4**: `1+5 = 6`
+* **Digit 3**: `6+4 = 10 => 0`
+* **Digit 2**: `0+3 = 3`
+* **Digit 1**: `3+2 = 5`
+* **Digit 0**: `5+1 = 6`
+
+Solution for this example is: `6530615`
+
+Result for my input data is: `43310035`
