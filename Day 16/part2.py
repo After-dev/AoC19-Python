@@ -39,8 +39,7 @@ print(FFT(input, 100))
 print("Result for my puzzle:")
 # Load data
 file = open('./input.data', 'r')
-lines = file.readlines()[0][:-1]
-input = lines.strip()*10000
+input = file.readlines()[0][:-1].strip()*10000
 
 # Calculate the solution
 solution = FFT(input, 100)
