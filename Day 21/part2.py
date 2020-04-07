@@ -114,9 +114,13 @@ def springdroid(intcode):
     springscript = [
         'NOT C J',
         'AND D J',
+        'AND H J',
         'NOT A T',
         'OR T J',
-        'WALK'
+        'NOT B T',
+        'AND D T',
+        'OR T J',
+        'RUN'
     ]
 
     inputs = [ord(i) for i in "\n".join(springscript)+"\n"]
