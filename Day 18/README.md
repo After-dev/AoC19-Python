@@ -116,4 +116,5 @@ Here are a few more examples:
 **How many steps is the shortest path that collects all of the keys?**
 
 ### Solution
-My solution is: 
+Result for my input data is: `4118`
+
