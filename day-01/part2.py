@@ -25,9 +25,9 @@ file = open('./input.data', 'r')
 modules = [int(mod[:-1]) for mod in file.readlines()]
 
 # Calculate the solution
-solutions = []
+solution = 0
 for mod in modules:
-    solutions.append(compute_fuel(mod))
+    solution += compute_fuel(mod)
 
 # Print the solution
-print(sum(solutions))
+print(solution)

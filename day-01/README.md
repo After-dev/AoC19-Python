@@ -30,7 +30,7 @@ This problem is solved by applying the following formula: **`fuel_required=floor
 
 With this formula, we use a **loop** to compute the fuel_required of each mass and finally sum all obtained values to get the result of this problem.
 
-Result for my input data is: `3382284`
+Result for my input data is: `3427972`
 
 ## Part 2
 
@@ -53,4 +53,4 @@ In this part, when we add fuel required for a mass, this **add more mass**. For 
 
 For implement this we use a **recursive function** with the previous formula.
 
-Result for my input data is: `5070541`
+Result for my input data is: `5139078`

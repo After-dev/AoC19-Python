@@ -3,7 +3,7 @@ import numpy as np
 
 def compute_fuel(mass):
     fuel_required = int(np.floor(mass/3)-2)
-    #print("Fuel requirements for a module with "+mass.__str__()+" of mass: "+fuel_required.__str__())
+    #print("Fuel requirements for a module with "+str(mass)+" of mass: "+str(fuel_required))
     return fuel_required
 
 
@@ -22,9 +22,9 @@ file = open('./input.data', 'r')
 modules = [int(mod[:-1]) for mod in file.readlines()]
 
 # Calculate the solution
-solutions = []
+solution = 0
 for mod in modules:
-    solutions.append(compute_fuel(mod))
+    solution += compute_fuel(mod)
 
 # Print the solution
-print(sum(solutions))
+print(solution)
